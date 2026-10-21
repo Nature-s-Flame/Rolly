@@ -2088,16 +2088,16 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
           return;
         }
         if (b.k === 'sig') {
-          ensure(10); font('body', 'normal', 9, INK); doc.text(txt('SIGNED BY THE PARTIES on ______________________ 20__'), M, y); y += 10;
+          ensure(20); font('body', 'normal', 9, INK); doc.text(txt('SIGNED BY THE PARTIES on ______________________ 20__'), M, y); y += 20;
           [b.purchaserName, 'NATURE’S FLAME LIMITED'].forEach(function (name) {
-            ensure(46);
-            font('body', 'normal', 8.8, INK); doc.text(txt('SIGNED for and on behalf of ' + name + ' by:'), M, y); y += 9;
+            ensure(100);
+            font('body', 'normal', 8.8, INK); doc.text(txt('SIGNED for and on behalf of ' + name + ' by:'), M, y); y += 18;
             doc.setDrawColor(INK[0], INK[1], INK[2]); doc.setLineWidth(0.3); doc.line(M, y, M + 75, y); doc.line(M + 95, y, M + 95 + 60, y);
-            font('body', 'normal', 7.5, MUTED); doc.text('Signature', M, y + 4); doc.text('Name / Title', M + 95, y + 4); y += 11;
-            font('body', 'normal', 8.8, INK); doc.text('Title: __________________________________', M, y); y += 11;
-            doc.text(txt('WITNESSED by:'), M, y); y += 7;
+            font('body', 'normal', 7.5, MUTED); doc.text('Signature', M, y + 4); doc.text('Name / Title', M + 95, y + 4); y += 22;
+            font('body', 'normal', 8.8, INK); doc.text('Title: __________________________________', M, y); y += 22;
+            doc.text(txt('WITNESSED by:'), M, y); y += 14;
             doc.line(M, y, M + 75, y); doc.line(M + 95, y, M + 95 + 60, y);
-            font('body', 'normal', 7.5, MUTED); doc.text('Print name / occupation / address', M, y + 4); doc.text('Signature', M + 95, y + 4); y += 13;
+            font('body', 'normal', 7.5, MUTED); doc.text('Print name / occupation / address', M, y + 4); doc.text('Signature', M + 95, y + 4); y += 26;
           });
           return;
         }
