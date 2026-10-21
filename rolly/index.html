@@ -2382,6 +2382,22 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       return '<button class="feat" data-quote="' + esc(it.id) + '" style="margin-top:10px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="t">' + esc(it.text) + '</span><span class="badge ' + it.cls + '">' + esc(it.tag) + '</span></div></button>';
     }).join('') + '</section>';
   }
+  function agreementsAttention() {
+    var ids = Object.keys(SUPPLYAGREEMENTS);
+    if (!ids.length) return '';
+    var items = [];
+    ids.forEach(function (id) {
+      var a = SUPPLYAGREEMENTS[id], s = agreementState(id, a);
+      if (s.key === 'Awaiting approval' && CAN_APPROVE) items.push({ id: id, tag: 'To approve', cls: 'b-soon', text: a.company + ' · from ' + personName(a.owner, a.ownerLabel) });
+      var mine = !a.owner || a.owner === ME;
+      if (mine && s.key === 'Returned') items.push({ id: id, tag: 'Sent back', cls: 'b-stall', text: a.company + (s.ap && s.ap.comment ? ' · ' + s.ap.comment : '') });
+      if (mine && s.key === 'Approved' && a.approvedAt && days(dateOf(a.approvedAt.slice(0, 10)), TODAY) <= 14) items.push({ id: id, tag: 'Approved', cls: 'b-review', text: (a.number || 'Draft') + ' · ' + a.company + ' · ready to send' });
+    });
+    if (!items.length) return '';
+    return '<section class="card"><div class="card-head"><h2>Supply agreements</h2><button class="back" data-go="contracts">All contracts</button></div>' + items.slice(0, 6).map(function (it) {
+      return '<button class="feat" data-agr="' + esc(it.id) + '" style="margin-top:10px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="t">' + esc(it.text) + '</span><span class="badge ' + it.cls + '">' + esc(it.tag) + '</span></div></button>';
+    }).join('') + '</section>';
+  }
   function qBadge(s) {
     var cls = { Draft: 'b-later', 'Awaiting approval': 'b-soon', Approved: 'st-Customer', Returned: 'b-stall', Accepted: 'b-today', Declined: 'st-Lost', Expired: 'st-Cold', Superseded: 'b-later' }[s.key] || 'b-later';
     return '<span class="badge ' + cls + '">' + esc(s.key === 'Returned' ? 'Sent back' : s.key) + '</span>' + (s.warn ? ' <span class="badge b-soon">Expires in ' + s.left + ' d</span>' : '');
@@ -3318,7 +3334,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       '<div class="grid g-2 hv2-panels">' +
       '<section class="card"><div class="card-head"><h2>My day</h2>' + (REAL ? '<span class="pill pill-soon">sample</span>' : '') + '<button class="back" data-go="activities">All activities</button></div>' +
       today.map(function (a) { return '<div class="row">' + actBadge(a) + '<div><div style="font-weight:600">' + esc(a.type) + ': ' + esc(a.what) + '</div><div class="small muted">' + esc(a.acc) + '</div></div></div>'; }).join('') + '</section>' +
-      quotesAttention() + prospectAttention() + attentionCard() + contractAttention() + complaintAttention() + '</div>' +
+      quotesAttention() + agreementsAttention() + prospectAttention() + attentionCard() + contractAttention() + complaintAttention() + '</div>' +
       '<section class="hv2-tree"><div class="card-head"><h2>Feature tree</h2><span class="small muted" style="color:#C4D2B6">Tap a tile to open it</span></div>' +
       tree().map(function (g, gi) {
         return '<div class="hv2-group"><div class="hv2-ghead">' + esc(g.name) + '<span class="tag ' + g.cls + '">' + esc(g.tag) + '</span></div>' +
