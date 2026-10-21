@@ -23,9 +23,9 @@
   --nf-sand:#CDC896;       /* 5875C secondary */
   --nf-forest:#1D332F;     /* 5467C secondary */
 
-  --bg:#F5F7F0;
-  --surface:#FFFFFF;
-  --surface-2:#FAFBF6;
+  --bg:#101C17;
+  --surface:rgba(255,255,255,.82);
+  --surface-2:rgba(255,255,255,.62);
   --line:#DDE3D2;
   --line-soft:#ECEFE4;
   --ink:#1D2A26;
@@ -50,7 +50,7 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --heading:#DCE8CC; --wordmark:#A9C55A; --chip:#2A3A34;
-  --bg:#121D1A; --surface:#1A2925; --surface-2:#1F302B; --line:#30443D; --line-soft:#26372F;
+  --bg:#0D1613; --surface:rgba(26,41,37,.76); --surface-2:rgba(31,48,43,.6); --line:#30443D; --line-soft:#26372F;
   --ink:#E6ECE2; --ink-2:#B9C5B8; --ink-3:#97A598; --link:#A9C55A; --link-hover:#C3DB7A;
   --sage-soft:#24372C; --sand-soft:#3A3724; --sand-ink:#E2DCA8;
   --alert-bg:#4A2A1C; --alert-ink:#F2B9A0; --info-bg:#233A36; --info-ink:#CFE3DD;
@@ -58,7 +58,7 @@
 }}
 :root[data-theme="dark"]{
   --heading:#DCE8CC; --wordmark:#A9C55A; --chip:#2A3A34;
-  --bg:#121D1A; --surface:#1A2925; --surface-2:#1F302B; --line:#30443D; --line-soft:#26372F;
+  --bg:#0D1613; --surface:rgba(26,41,37,.76); --surface-2:rgba(31,48,43,.6); --line:#30443D; --line-soft:#26372F;
   --ink:#E6ECE2; --ink-2:#B9C5B8; --ink-3:#97A598; --link:#A9C55A; --link-hover:#C3DB7A;
   --sage-soft:#24372C; --sand-soft:#3A3724; --sand-ink:#E2DCA8;
   --alert-bg:#4A2A1C; --alert-ink:#F2B9A0; --info-bg:#233A36; --info-ink:#CFE3DD;
@@ -69,19 +69,33 @@ html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit}
 a{color:var(--link)}a:hover{color:var(--link-hover)}
-h1,h2,h3{font-family:var(--cond);color:var(--heading);margin:0}
+h1,h2,h3{font-family:var(--cond);color:#fff;margin:0;text-shadow:0 1px 3px rgba(0,0,0,.3)}
 h1{font-weight:600;font-size:32px;letter-spacing:.2px}
 h2{font-weight:600;font-size:21px;letter-spacing:.2px}
-.eyebrow{font-family:var(--cond);font-weight:400;text-transform:uppercase;letter-spacing:1.4px;font-size:13px;color:var(--ink-3)}
-.sub{margin:4px 0 0;font-size:15px;color:var(--ink-2)}
-.muted{color:var(--ink-2)}
+.card h2,.card h3{color:var(--heading);text-shadow:none}
+.eyebrow{font-family:var(--cond);font-weight:400;text-transform:uppercase;letter-spacing:1.4px;font-size:13px;color:rgba(255,255,255,.78)}
+.side .eyebrow,.chat .eyebrow{color:var(--ink-3)}
+.sub{margin:4px 0 0;font-size:15px;color:rgba(255,255,255,.85)}
+.muted{color:rgba(255,255,255,.8)}
 .small{font-size:13px}
-.tiny{font-size:12px;color:var(--ink-3)}
+.tiny{font-size:12px;color:rgba(255,255,255,.65)}
+.card .muted,.feat .muted,.stage-card .muted,.tbl-wrap .muted,.col .muted,.kpi .muted,.chat .muted,.side .muted{color:var(--ink-2)}
+.card .tiny,.feat .tiny,.stage-card .tiny,.tbl-wrap .tiny,.col .tiny,.kpi .tiny,.chat .tiny,.side .tiny{color:var(--ink-3)}
 :focus-visible{outline:3px solid var(--nf-green);outline-offset:2px}
 
 /* Shell */
 .app{min-height:100vh;display:flex;flex-direction:column}
-.top{background:var(--nf-forest);color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;padding:10px 24px;position:relative;overflow:hidden}
+.app::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(1100px 850px at 0% 0%,rgba(130,165,25,.6),transparent 72%),
+    radial-gradient(1100px 850px at 100% 0%,rgba(205,200,150,.55),transparent 72%),
+    radial-gradient(1200px 900px at 100% 100%,rgba(130,165,25,.5),transparent 72%),
+    radial-gradient(1200px 900px at 0% 100%,rgba(205,200,150,.4),transparent 72%),
+    linear-gradient(160deg,#28452F,#1B3028 70%);
+  filter:saturate(1.2)}
+.top{background:linear-gradient(135deg,rgba(29,51,47,.68),rgba(14,23,19,.55));color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;padding:10px 24px;position:relative;overflow:hidden;
+  -webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
+  border-bottom:1px solid rgba(255,255,255,.14);box-shadow:0 12px 28px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.1)}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff}
 .brand .name{font-family:var(--cond);font-weight:600;font-size:26px;letter-spacing:.4px;line-height:1}
 .brand .by{font-family:var(--cond);font-weight:300;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:var(--nf-sage);margin-top:3px}
@@ -97,12 +111,15 @@ h2{font-weight:600;font-size:21px;letter-spacing:.2px}
 .avatar{width:36px;height:36px;border-radius:50%;background:var(--nf-sage);color:var(--nf-forest);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 
 .body{display:flex;flex-wrap:wrap;flex:1 1 auto;align-items:stretch}
-.side{flex:1 1 240px;max-width:290px;background:var(--surface);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px}
+.side{flex:1 1 240px;max-width:290px;background:var(--surface);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:22px;
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:1px 0 0 rgba(255,255,255,.08) inset}
 .side-group{display:flex;flex-direction:column;gap:3px}
 .side-head{display:flex;align-items:center;justify-content:space-between;padding:0 10px 6px}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;border:0;background:transparent;padding:9px 10px;border-radius:6px;font-size:14.5px;color:var(--ink);cursor:pointer;min-height:40px;border-left:3px solid transparent}
 .nav:hover{background:var(--sage-soft)}
-.nav.on{background:var(--nf-forest);color:#fff;border-left-color:var(--nf-green)}
+.nav.on{background:linear-gradient(135deg,rgba(29,51,47,.88),rgba(20,34,30,.72));color:#fff;border-left-color:var(--nf-green);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 4px 10px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.12)}
 .pill{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
 .pill-soon{background:var(--sand-soft);color:var(--sand-ink)}
 .pill-src{background:var(--info-bg);color:var(--info-ink)}
@@ -111,11 +128,31 @@ h2{font-weight:600;font-size:21px;letter-spacing:.2px}
 .portal-link:hover{background:var(--cta-hover);color:#fff}
 .side-foot{margin-top:auto;padding:12px 10px 0;border-top:1px solid var(--line-soft);font-size:12.5px;color:var(--ink-3)}
 
-main{flex:999 1 560px;min-width:0;padding:28px 32px 96px;display:flex;flex-direction:column;gap:24px}
+/* Mobile off-canvas nav (phone-access) */
+.navtoggle{display:none;flex-direction:column;justify-content:center;align-items:center;gap:4px;width:40px;height:40px;flex:none;border:0;border-radius:8px;background:rgba(255,255,255,.1);cursor:pointer}
+.navtoggle:hover{background:rgba(255,255,255,.18)}
+.navtoggle span{display:block;width:18px;height:2px;border-radius:2px;background:#fff}
+.nav-backdrop{display:none}
+.side-close{display:none}
+@media (max-width:860px){
+  .navtoggle{display:flex}
+  .nav-backdrop{display:block;position:fixed;inset:0;z-index:35;background:rgba(14,23,19,.55);opacity:0;pointer-events:none;transition:opacity .2s ease}
+  .nav-backdrop.show{opacity:1;pointer-events:auto}
+  .side{position:fixed;top:0;left:0;z-index:40;height:100vh;width:min(320px,84vw);max-width:none;transform:translateX(-100%);transition:transform .25s ease;box-shadow:0 0 0 1px var(--line),var(--shadow);overflow-y:auto}
+  .side.side-open{transform:translateX(0)}
+  .side-close{display:inline-flex;align-self:flex-start;align-items:center;gap:6px;margin-bottom:4px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:6px;padding:8px 12px;font-size:13.5px;font-weight:600;cursor:pointer;
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+}
+
+main{flex:999 1 560px;min-width:0;padding:28px 32px 96px;display:flex;flex-direction:column;gap:24px;color:#fff}
+.card,.feat,.stage-card,.tbl-wrap,.col,.kpi{color:var(--ink)}
 @media (max-width:640px){main{padding:20px 16px 96px}.top{padding:10px 16px}}
 
 /* Hero */
-.hero{position:relative;overflow:hidden;background:var(--nf-forest);color:#fff;border-radius:12px;padding:26px 28px;min-height:132px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(29,51,47,.75),rgba(14,23,19,.55));color:#fff;border-radius:12px;padding:26px 28px;min-height:132px;
+  -webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 1px 1px rgba(0,0,0,.2),0 20px 40px -12px rgba(0,0,0,.45),inset 0 1.5px 0 rgba(255,255,255,.3)}
 .hero h1{color:#fff;font-size:34px}
 .hero p{margin:6px 0 0;color:var(--nf-sage);font-size:16px;max-width:60ch;position:relative;z-index:1}
 .hero .swoosh{position:absolute;right:-10px;bottom:-6px;height:150px;width:auto;pointer-events:none}
@@ -125,20 +162,39 @@ main{flex:999 1 560px;min-width:0;padding:28px 32px 96px;display:flex;flex-direc
 .g-kpi{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
 .g-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .g-3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:0 1px 1px rgba(0,0,0,.08),0 10px 18px -6px rgba(29,51,47,.25),0 26px 44px -14px rgba(29,51,47,.32),inset 0 1.5px 0 rgba(255,255,255,.7)}
+.card::before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.45),transparent 40%)}
+.card>*{position:relative;z-index:1}
 .card h2{font-size:19px}
 .card-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
-.kpi{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--nf-green);border-radius:10px;padding:14px 18px}
+.kpi{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--nf-green);border-radius:10px;padding:14px 18px;
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:0 1px 1px rgba(0,0,0,.08),0 8px 14px -4px rgba(29,51,47,.25),0 20px 32px -10px rgba(29,51,47,.3),inset 0 1.5px 0 rgba(255,255,255,.7);
+  transition:transform .15s ease,box-shadow .15s ease}
+.kpi::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 80% at 12% -15%,rgba(255,255,255,.5),transparent 60%)}
+.kpi:hover{transform:translateY(-2px)}
+.kpi .v,.kpi .l,.kpi .n{position:relative;z-index:1}
 .kpi .v{font-family:var(--cond);font-weight:700;font-size:30px;color:var(--heading);margin-top:2px;line-height:1.1}
 .kpi .l{font-size:13px;color:var(--ink-2)}
 .kpi .n{font-size:12.5px;color:var(--ink-3);margin-top:2px}
 .kpi.src{border-top-color:var(--nf-olive)}
 
-.feat{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:11px 13px;cursor:pointer;margin:0}
-.feat:hover{border-color:var(--nf-olive);box-shadow:0 0 0 1px var(--nf-olive) inset}
+.feat{position:relative;overflow:hidden;display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:11px 13px;cursor:pointer;margin:0;
+  -webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);
+  box-shadow:0 1px 1px rgba(0,0,0,.06),0 8px 16px -8px rgba(29,51,47,.3),inset 0 1px 0 rgba(255,255,255,.6);
+  transition:transform .15s ease,box-shadow .15s ease}
+.feat::before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.4),transparent 45%)}
+.feat>*{position:relative;z-index:1}
+.feat:hover{border-color:var(--nf-olive);box-shadow:0 0 0 1px var(--nf-olive) inset,0 10px 18px -8px rgba(29,51,47,.35);transform:translateY(-1px)}
 .feat .t{font-weight:700;font-size:14.5px}
 .feat .d{font-size:13.5px;color:var(--ink-2);margin-top:2px;line-height:1.4}
-.stage-card{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.stage-card{position:relative;overflow:hidden;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;
+  -webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);
+  box-shadow:0 1px 1px rgba(0,0,0,.08),0 10px 18px -8px rgba(29,51,47,.25),0 24px 40px -14px rgba(29,51,47,.3),inset 0 1.5px 0 rgba(255,255,255,.6)}
+.stage-card::before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.4),transparent 40%)}
+.stage-card>*{position:relative;z-index:1}
 .stage-card .hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .stage-card .hd span:first-child{font-family:var(--cond);font-weight:600;font-size:17px;color:var(--heading)}
 .tag{font-size:12px;padding:3px 9px;border-radius:999px;font-weight:600}
@@ -159,7 +215,8 @@ main{flex:999 1 560px;min-width:0;padding:28px 32px 96px;display:flex;flex-direc
 .st-Lapsed{background:var(--sand-soft);color:var(--sand-ink)}
 .b-soon{background:var(--sand-soft);color:var(--sand-ink)}
 .b-review{background:var(--info-bg);color:var(--info-ink)}
-.review-box{margin-top:12px;padding:12px 14px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line);border-left:4px solid var(--nf-olive)}
+.review-box{margin-top:12px;padding:12px 14px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line);border-left:4px solid var(--nf-olive);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .review-box.overdue{border-left-color:var(--alert-ink)}
 .rv-in{display:block;width:100%;margin-top:4px;height:38px;border:1px solid var(--line);border-radius:6px;padding:0 10px;font:inherit;font-size:14px;background:var(--surface);color:var(--ink)}
 .btn[disabled]{opacity:.6;cursor:default}
@@ -182,7 +239,8 @@ textarea{background:var(--surface);color:var(--ink)}
 .value-box .vv{font-family:var(--cond);font-weight:700;font-size:26px;color:var(--heading)}
 .lead-card{border-left:4px solid var(--nf-green)}
 .st-Cold{background:var(--info-bg);color:var(--info-ink)}
-.btn-quiet{background:var(--surface);color:var(--heading);border:1px solid var(--line)}
+.btn-quiet{background:var(--surface);color:var(--heading);border:1px solid var(--line);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .btn-quiet:hover{border-color:var(--nf-olive)}
 .step-btn{border:0;cursor:pointer;font:inherit;font-size:13px}
 .step-btn:hover{outline:2px solid var(--nf-olive)}
@@ -234,10 +292,12 @@ textarea{background:var(--surface);color:var(--ink)}
 
 .lnk{border:0;background:none;padding:0;color:var(--link);font-weight:600;cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px}
 .lnk:hover{color:var(--link-hover)}
-.back{border:0;background:none;color:var(--link);cursor:pointer;padding:6px 0;font-weight:600;font-size:14px;align-self:flex-start}
-.back:hover{color:var(--link-hover)}
+.back{border:0;background:none;color:#A9C55A;cursor:pointer;padding:6px 0;font-weight:600;font-size:14px;align-self:flex-start}
+.back:hover{color:#C3DB7A}
 
-.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:0 1px 1px rgba(0,0,0,.08),0 10px 18px -6px rgba(29,51,47,.25),0 26px 44px -14px rgba(29,51,47,.32),inset 0 1.5px 0 rgba(255,255,255,.6)}
 .tbl{width:100%;border-collapse:collapse;font-size:14.5px}
 .tbl th{text-align:left;font-family:var(--cond);font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-2);font-size:13px;padding:11px 14px;border-bottom:2px solid var(--nf-sage);background:var(--surface-2);white-space:nowrap}
 .tbl td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
@@ -247,7 +307,11 @@ textarea{background:var(--surface);color:var(--ink)}
 /* Pipeline */
 .board{overflow-x:auto;padding-bottom:8px}
 .board-in{display:flex;gap:12px;min-width:min-content}
-.col{flex:0 0 220px;background:var(--sage-soft);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;border-top:3px solid var(--nf-olive)}
+.col{position:relative;overflow:hidden;flex:0 0 220px;background:linear-gradient(165deg,rgba(225,235,205,.85),rgba(205,220,185,.66));border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;border-top:3px solid var(--nf-olive);
+  -webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);
+  box-shadow:0 1px 1px rgba(0,0,0,.08),0 10px 18px -8px rgba(29,51,47,.3),0 22px 36px -14px rgba(29,51,47,.3),inset 0 1.5px 0 rgba(255,255,255,.7)}
+.col::before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.4),transparent 40%)}
+.col>*{position:relative;z-index:1}
 .col.won{border-top-color:var(--nf-green)}
 .col .h{font-family:var(--cond);font-weight:600;font-size:16px;color:var(--heading)}
 .steps{display:flex;gap:6px;flex-wrap:wrap}
@@ -266,35 +330,106 @@ textarea{background:var(--surface);color:var(--ink)}
 .hbar .fill{height:14px;border-radius:4px;background:var(--nf-olive)}
 .hbar span:last-child{text-align:right;font-weight:600}
 
-.draft{background:var(--surface-2);border:1px dashed var(--nf-olive);border-radius:8px;padding:12px 14px;margin-top:6px}
+.draft{background:var(--surface-2);border:1px dashed var(--nf-olive);border-radius:8px;padding:12px 14px;margin-top:6px;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .draft .h{font-family:var(--cond);font-size:12.5px;font-weight:600;color:var(--nf-olive);letter-spacing:.8px;text-transform:uppercase}
 textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit;font-size:14px;resize:vertical}
 .check{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line-soft);cursor:pointer}
 .check:last-child{border-bottom:0}
 .check input{width:20px;height:20px;margin-top:2px;accent-color:var(--nf-olive)}
-.plan-ex{background:var(--nf-forest);color:#fff;border-radius:10px;padding:18px 20px;position:relative;overflow:hidden}
+.plan-ex{background:linear-gradient(145deg,rgba(29,51,47,.75),rgba(14,23,19,.55));color:#fff;border-radius:10px;padding:18px 20px;position:relative;overflow:hidden;
+  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);
+  border:1px solid rgba(255,255,255,.16);box-shadow:0 14px 30px -12px rgba(0,0,0,.45),inset 0 1.5px 0 rgba(255,255,255,.3)}
 .plan-ex .eyebrow{color:var(--nf-green)}
 
 /* Chat */
-.launch{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;background:var(--nf-forest);color:#fff;font-weight:700;font-size:15px;padding:0 20px;height:52px;cursor:pointer;box-shadow:var(--shadow)}
-.launch:hover{background:#28463F}
-.chat{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:30;width:410px;max-width:calc(100vw - 32px);height:620px;max-height:calc(100vh - 40px);background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.launch{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;align-items:center;gap:8px;border:2px solid rgba(130,165,25,.85);border-radius:999px;background:linear-gradient(135deg,rgba(40,70,60,.95),rgba(20,34,30,.95));color:#fff;font-weight:700;font-size:15px;padding:0 20px;height:52px;cursor:pointer;
+  -webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);
+  box-shadow:0 2px 2px rgba(0,0,0,.25),0 0 0 5px rgba(130,165,25,.18),0 10px 22px -4px rgba(130,165,25,.4),0 22px 36px -10px rgba(0,0,0,.6),inset 0 1.5px 0 rgba(255,255,255,.2)}
+.launch:hover{border-color:var(--nf-green);box-shadow:0 2px 2px rgba(0,0,0,.25),0 0 0 7px rgba(130,165,25,.25),0 10px 22px -4px rgba(130,165,25,.5),0 22px 36px -10px rgba(0,0,0,.6),inset 0 1.5px 0 rgba(255,255,255,.25)}
+.chat{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:30;width:410px;max-width:calc(100vw - 32px);height:620px;max-height:calc(100vh - 40px);background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 1px rgba(0,0,0,.1),0 24px 48px -16px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.3);display:flex;flex-direction:column;overflow:hidden;
+  -webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%)}
 @media (max-width:640px){.chat{right:16px;bottom:16px}}
-.chat-h{background:var(--nf-forest);color:#fff;padding:12px 10px 12px 16px;display:flex;align-items:center;gap:10px}
+.chat-h{background:linear-gradient(135deg,rgba(29,51,47,.75),rgba(14,23,19,.6));color:#fff;padding:12px 10px 12px 16px;display:flex;align-items:center;gap:10px;
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%)}
 .chat-h .t{font-family:var(--cond);font-weight:600;font-size:19px;line-height:1}
 .chat-h .s{font-size:12px;color:var(--nf-sage)}
 .iconbtn{border:0;background:transparent;color:#fff;font-size:20px;min-width:40px;height:40px;border-radius:6px;cursor:pointer;padding:0 8px}
 .iconbtn:hover{background:rgba(255,255,255,.12)}
 .chat-b{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--surface-2)}
 .msg-u{align-self:flex-end;max-width:85%;background:var(--nf-forest);color:#fff;border-radius:12px 12px 4px 12px;padding:10px 14px;font-size:14.5px}
-.msg-r{align-self:flex-start;max-width:92%;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--nf-green);border-radius:12px 12px 12px 4px;padding:11px 14px;font-size:14.5px;white-space:pre-line}
+.msg-r{align-self:flex-start;max-width:92%;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--nf-green);border-radius:12px 12px 12px 4px;padding:11px 14px;font-size:14.5px;white-space:pre-line;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .msg-r .src{margin-top:8px;padding-top:7px;border-top:1px solid var(--line-soft);font-size:12px;color:var(--ink-3);white-space:normal}
 .msg-r .src-line{display:block;margin-top:8px;padding-top:7px;border-top:1px solid var(--line-soft);font-size:12px;color:var(--ink-3)}
-.chip{border:1px solid var(--line);background:var(--surface);color:var(--heading);font-size:13.5px;font-weight:600;border-radius:999px;padding:8px 14px;cursor:pointer;min-height:38px;text-align:left}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--heading);font-size:13.5px;font-weight:600;border-radius:999px;padding:8px 14px;cursor:pointer;min-height:38px;text-align:left;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .chip:hover{border-color:var(--nf-olive);background:var(--sage-soft)}
 .chat-f{border-top:1px solid var(--line);padding:12px;display:flex;gap:8px;background:var(--surface)}
 .chat-f input{flex:1;height:44px;border:1px solid var(--line);border-radius:8px;padding:0 12px;font:inherit;font-size:15px;min-width:0}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---- Home: iOS-style glass ---- */
+.hv2{position:relative;display:flex;flex-direction:column;gap:22px}
+.hv2-hero{position:relative;overflow:hidden;border-radius:28px;padding:30px 32px;min-height:140px;color:#fff;
+  background:linear-gradient(145deg,rgba(29,51,47,.8),rgba(14,23,19,.6));
+  -webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 2px 2px rgba(0,0,0,.2),0 18px 30px -10px rgba(0,0,0,.5),0 36px 60px -16px rgba(0,0,0,.4),inset 0 1.5px 0 rgba(255,255,255,.35)}
+.hv2-hero .eyebrow{color:var(--nf-green);position:relative;z-index:1}
+.hv2-hero h1{color:#fff;font-size:34px;position:relative;z-index:1;margin-top:4px}
+.hv2-hero p{margin:6px 0 0;color:#EAF0E0;font-size:16px;max-width:60ch;position:relative;z-index:1}
+.hv2-hero .swoosh{position:absolute;right:0;top:0;height:100%;width:auto;pointer-events:none}
+.hv2-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.hv2-kpi{position:relative;overflow:hidden;border-radius:20px;padding:16px 18px;color:#fff;
+  background:linear-gradient(150deg,rgba(255,255,255,.28),rgba(255,255,255,.04) 55%,rgba(255,255,255,.12));
+  -webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:0 1px 1px rgba(0,0,0,.2),0 8px 14px -4px rgba(0,0,0,.35),0 20px 32px -10px rgba(0,0,0,.45),
+    inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -1.5px 0 rgba(0,0,0,.2);
+  transition:transform .15s ease,box-shadow .15s ease}
+.hv2-kpi::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(55% 80% at 12% -15%,rgba(255,255,255,.45),transparent 60%)}
+.hv2-kpi:hover{transform:translateY(-3px);box-shadow:0 1px 1px rgba(0,0,0,.2),0 10px 18px -4px rgba(0,0,0,.4),0 26px 40px -10px rgba(0,0,0,.5),inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -1.5px 0 rgba(0,0,0,.2)}
+.hv2-kpi.src{border-color:rgba(205,200,150,.6)}
+.hv2-kpi .l,.hv2-kpi .v,.hv2-kpi .n{position:relative;z-index:1}
+.hv2-kpi .l{font-size:12.5px;color:#D9E4CC}
+.hv2-kpi .v{font-family:var(--cond);font-weight:700;font-size:26px;margin-top:2px;line-height:1.1;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.hv2-kpi .n{font-size:11.5px;color:#C4D2B6;margin-top:2px}
+.hv2-panels .card{position:relative;overflow:hidden;background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.6);border-radius:20px;
+  box-shadow:0 1px 1px rgba(0,0,0,.08),0 10px 18px -6px rgba(29,51,47,.22),0 26px 44px -14px rgba(29,51,47,.3),
+    inset 0 1.5px 0 rgba(255,255,255,.8)}
+.hv2-panels .card::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(160deg,rgba(255,255,255,.5),transparent 40%)}
+:root[data-theme="dark"] .hv2-panels .card{background:rgba(26,41,37,.74)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hv2-panels .card{background:rgba(26,41,37,.74)}}
+.hv2-panels .card>*{position:relative;z-index:1}
+.hv2-panels .feat{background:rgba(255,255,255,.55);border-color:rgba(255,255,255,.7);border-radius:12px;box-shadow:0 4px 10px rgba(29,51,47,.1)}
+.hv2-tree{background:rgba(255,255,255,.1);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.22);border-radius:24px;padding:20px 22px;color:#fff;
+  box-shadow:0 14px 30px -10px rgba(0,0,0,.4),inset 0 1.5px 0 rgba(255,255,255,.3)}
+.hv2-tree h2{color:#fff}
+.hv2-group{margin-top:18px}
+.hv2-group:first-of-type{margin-top:4px}
+.hv2-ghead{display:flex;align-items:center;gap:10px;font-family:var(--cond);font-weight:600;font-size:15px;color:#EAF0E0;margin-bottom:10px}
+.hv2-apps{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:18px 10px}
+.hv2-app{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;border:0;background:transparent;cursor:pointer;padding:4px}
+.hv2-ico{position:relative;overflow:hidden;width:60px;height:60px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-family:var(--cond);font-weight:700;font-size:17px;color:#fff;
+  background:linear-gradient(155deg,rgba(var(--tint),1),rgba(var(--tint),.55) 60%,rgba(var(--tint),.8));
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.4);
+  box-shadow:0 2px 2px rgba(0,0,0,.25),0 8px 10px -3px rgba(0,0,0,.4),0 16px 22px -8px rgba(0,0,0,.45),
+    inset 0 1.5px 0 rgba(255,255,255,.65),inset 0 -3px 5px rgba(0,0,0,.25);
+  text-shadow:0 1px 2px rgba(0,0,0,.3);
+  transition:transform .15s ease,box-shadow .15s ease}
+.hv2-ico::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(60% 55% at 28% 18%,rgba(255,255,255,.65),transparent 65%)}
+.hv2-ico-t{position:relative;z-index:1}
+.hv2-app:hover .hv2-ico{transform:translateY(-4px) scale(1.05);
+  box-shadow:0 2px 2px rgba(0,0,0,.25),0 12px 16px -4px rgba(0,0,0,.45),0 22px 30px -8px rgba(0,0,0,.5),
+    inset 0 1.5px 0 rgba(255,255,255,.65),inset 0 -3px 5px rgba(0,0,0,.25)}
+.hv2-lbl{font-size:11.5px;text-align:center;line-height:1.25;color:#EAF0E0;max-width:92px;text-shadow:0 1px 3px rgba(0,0,0,.4)}
+.hv2-badge{position:absolute;top:0;right:12px;background:#E0523F;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.4);z-index:2}
+
 </style>
 </head>
 <body>
@@ -442,7 +577,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   var SUGG = ['Who should I call today?', 'Brief me on Southern Hearth Merchants', 'How much 15 kg bag stock can we promise?', 'Draft a follow-up to Ruru Bay School'];
 
   // ---------- State ----------
-  var st = { view: 'home', dealId: 'd1', accId: 'kv', planId: 'agreements', done: { a6: true }, drafts: {}, chatOpen: false, msgs: [], thinking: false };
+  var st = { view: 'home', dealId: 'd1', accId: 'kv', planId: 'agreements', done: { a6: true }, drafts: {}, chatOpen: false, msgs: [], thinking: false, navOpen: false };
   function set(patch) { Object.assign(st, patch); render(); }
 
   // ---------- Derived ----------
@@ -924,8 +1059,8 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       '<div class="card-head" style="align-items:flex-end"><div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1>' + esc(l.company) + '</h1>' + leadBadge(s) + '</div>' +
       '<p class="sub">' + esc([l.seg, l.city, 'Owner ' + leadOwner(l), 'Added ' + longDate((l.createdAt || '').slice(0, 10))].filter(Boolean).join(' · ')) +
       (s.key === 'Active' ? ' · goes cold ' + esc(longDate(iso(s.coldOn))) : '') + (s.acct ? ' · <button class="lnk" data-acc="' + esc(s.acct.id) + '">Open customer account</button>' : '') + '</p></div>' +
-      '<div style="text-align:right"><div style="font-family:var(--cond);font-weight:700;font-size:28px;color:var(--heading)">' + esc(annual ? short(annual) : '—') + '<span class="small muted" style="font-family:var(--sans);font-weight:400"> / yr</span></div>' +
-      '<div class="tiny">' + esc(annual && a.term ? nz(annual * a.term) + ' over ' + a.term + ' years' : '') + '</div></div></div>';
+      '<div style="text-align:right"><div style="font-family:var(--cond);font-weight:700;font-size:28px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.3)">' + esc(annual ? short(annual) : '—') + '<span class="small" style="font-family:var(--sans);font-weight:400;color:rgba(255,255,255,.78)"> / yr</span></div>' +
+      '<div class="tiny" style="color:rgba(255,255,255,.7)">' + esc(annual && a.term ? nz(annual * a.term) + ' over ' + a.term + ' years' : '') + '</div></div></div>';
     if (s.warn) html += '<div class="card warn-card"><strong>This prospect goes cold on ' + esc(longDate(iso(s.coldOn))) + '.</strong> Unless it is signed by then it moves to the Cold list automatically. Log progress or move it forward if it is still live.</div>';
     if (s.key === 'Cold') html += '<div class="card info-card"><strong>Cold:</strong> not signed within 12 months of being added' + (l.coldReset && l.coldReset !== (l.createdAt || '').slice(0, 10) ? ' (or revived)' : '') + '. ' +
       '<label for="cold-reason" class="small muted" style="margin-left:6px">Reason (optional)</label> ' + sel('cold-reason', 'lf:coldReason', { coldReason: l.coldReason || '' }, LOST_REASONS, 'Not recorded') + '</div>';
@@ -1183,6 +1318,179 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       if (ME) watchProfile(); else if (user) user.id().then(function (id) { if (id) { ME = id; watchProfile(); } });
       render();
     }).catch(function () { /* stay local */ });
+  }
+
+  // ---------- Complaint log ----------
+  // Customers submit a complaint from the portal (rolly/portal.html, which writes to the same
+  // `complaints` collection/localStorage key); it goes to their account's sales rep. The rep reviews
+  // it, then either declines it directly (no sign-off needed) or proposes accepting it with a
+  // resolution — every acceptance needs the General Manager's (APPROVER's) approval before it is
+  // final. States: Submitted -> Under review -> Declined, or -> Awaiting GM approval -> Accepted ->
+  // Resolved; a returned-for-more-detail decision keeps status 'Awaiting GM approval' but displays as
+  // 'Returned' until resubmitted (mirrors the quotes approval pattern above). Storage: artifact db
+  // `complaints`, `complaintApprovals` (writable by Editors only, so only the GM approves), and
+  // `counters/complaints-YYYY`; locally, this browser.
+  var COMPLAINTS = {}, COMPLAINT_APPROVALS = {}, CPS = null;
+  var COMPLAINT_CATEGORIES = ['Product quality', 'Delivery', 'Billing or invoice', 'Service', 'Other'];
+  var COMPLAINT_STAGES = ['Submitted', 'Under review', 'Awaiting GM approval', 'Accepted', 'Resolved'];
+  function initComplaints() {
+    if (CPS) return;
+    COMPLAINTS = qLocal('rolly.complaints', {}); COMPLAINT_APPROVALS = qLocal('rolly.complaintApprovals', {});
+    CPS = { mode: 'local',
+      saveComplaint: function (id, d) { COMPLAINTS[id] = d; return qPut('rolly.complaints', COMPLAINTS); },
+      saveApproval: function (id, d) { COMPLAINT_APPROVALS[id] = d; return qPut('rolly.complaintApprovals', COMPLAINT_APPROVALS); },
+      nextNumber: function (year) { var c = qLocal('rolly.complaintCounter', {}); c[year] = (c[year] || 0) + 1; return qPut('rolly.complaintCounter', c).then(function () { return c[year]; }); } };
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    window.claude.use('db').then(function (db) {
+      if (!db) return;
+      COMPLAINTS = {}; COMPLAINT_APPROVALS = {};
+      CPS = { mode: 'shared',
+        saveComplaint: function (id, d) { return db.collection('complaints').doc(id).set(d); },
+        saveApproval: function (id, d) { return db.collection('complaintApprovals').doc(id).set(d); },
+        nextNumber: function (year) {
+          var ref = db.doc('counters/complaints-' + year), holder = uid();
+          var attempt = function (n) {
+            return ref.acquire({ holder: holder, ttlMs: 5000 }).then(function (lease) {
+              if (!lease.acquired) {
+                if (n > 8) throw { code: 'busy' };
+                return new Promise(function (res) { setTimeout(res, 400 + Math.random() * 400); }).then(function () { return attempt(n + 1); });
+              }
+              return ref.get().then(function (snap) {
+                var next = ((snap.exists && snap.data().n) || 0) + 1;
+                return ref.set({ n: next, year: year }).then(function () { return next; });
+              });
+            });
+          };
+          return attempt(0);
+        } };
+      ['complaints', 'complaintApprovals'].forEach(function (name) {
+        db.collection(name).onSnapshot(function (snap) {
+          var m = {};
+          snap.docs.forEach(function (d) { m[d.id] = d.data(); });
+          if (name === 'complaints') COMPLAINTS = m; else COMPLAINT_APPROVALS = m;
+          resolvePeople(); render();
+        }, function () { /* keep what is on screen */ });
+      });
+      render();
+    }).catch(function () { /* stay local */ });
+  }
+  function complaintApprovalOf(id, c) {
+    var a = COMPLAINT_APPROVALS[id];
+    if (!a || !c.proposedAt || a.at < c.proposedAt) return null;
+    return a;
+  }
+  function complaintState(id, c) {
+    if (c.status === 'Awaiting GM approval') {
+      var ap = complaintApprovalOf(id, c);
+      if (ap && ap.decision === 'returned') return { key: 'Returned', label: 'Sent back', ap: ap };
+      return { key: 'Awaiting GM approval', label: 'Awaiting GM approval' };
+    }
+    return { key: c.status, label: c.status };
+  }
+  function cBadge(s) {
+    var cls = { Submitted: 'b-later', 'Under review': 'b-review', 'Awaiting GM approval': 'b-soon', Returned: 'b-stall', Accepted: 'st-Customer', Resolved: 'st-Customer', Declined: 'st-Lost' }[s.key] || 'b-later';
+    return '<span class="badge ' + cls + '">' + esc(s.key === 'Returned' ? 'Sent back' : s.key) + '</span>';
+  }
+  function complaintCounts() {
+    var ids = Object.keys(COMPLAINTS);
+    var byKey = function (k) { return ids.filter(function (id) { return complaintState(id, COMPLAINTS[id]).key === k; }).length; };
+    return { open: byKey('Submitted') + byKey('Under review') + byKey('Returned'), waiting: byKey('Awaiting GM approval'), resolved: byKey('Resolved'), total: ids.length };
+  }
+  function complaintBadge() {
+    var counts = complaintCounts();
+    return CAN_APPROVE && counts.waiting ? counts.waiting + ' to approve' : counts.open || 'OK';
+  }
+  function complaintNextStep(c, s) {
+    var owner = c.owner || 'the sales team';
+    if (s.key === 'Submitted') return owner + ' to review it';
+    if (s.key === 'Under review') return owner + ' to decide: accept or decline';
+    if (s.key === 'Awaiting GM approval') return APPROVER.name + ' (' + APPROVER.title + ') to approve';
+    if (s.key === 'Returned') return owner + ' to address ' + APPROVER.name + '’s comments and resubmit';
+    if (s.key === 'Accepted') return owner + ' to carry out the resolution, then mark it resolved';
+    if (s.key === 'Resolved') return 'Closed — resolved';
+    if (s.key === 'Declined') return 'Closed — declined';
+    return '';
+  }
+  function blankComplaint() { return { category: COMPLAINT_CATEGORIES[0] }; }
+  function complaintCompanyHint(f) {
+    var txt = (f.company || '').trim();
+    if (!txt) return 'Type an existing customer or prospect name — this fills in the sales rep automatically.';
+    var m = companyMatch(txt);
+    if (m) return (m.kind === 'acc' ? 'Existing customer.' : 'Open prospect.') + ' Rep and contact details filled in below — change them if this complaint is from someone else there.';
+    return 'No existing customer or prospect matches this name. You can still log the complaint; just fill in the rep yourself.';
+  }
+  function applyCompanyToComplaint(f, m) {
+    f.company = m.name;
+    if (m.kind === 'acc') {
+      var a = ACC.filter(function (x) { return x.id === m.id; })[0], r = (a && a.real) || {};
+      f.acc = m.id; delete f.lead;
+      f.contactName = r.contact || ''; f.contactPhone = r.phone || ''; f.owner = (a && a.owner) || '';
+    } else {
+      var l = LEADS[m.id] || {};
+      f.lead = m.id; delete f.acc;
+      f.contactName = l.contactName || ''; f.contactEmail = l.email || ''; f.contactPhone = l.mobile || ''; f.owner = leadOwner(l);
+    }
+  }
+  function createComplaint(f) {
+    var errs = [];
+    if (!(f.company || '').trim()) errs.push('Company name is required.');
+    if (!(f.contactName || '').trim() && !(f.contactEmail || '').trim() && !(f.contactPhone || '').trim()) errs.push('Add a contact name, email or phone.');
+    if (!(f.description || '').trim()) errs.push('Describe what happened.');
+    if (errs.length) return set({ cfErrors: errs });
+    var id = 'c' + uid(), year = TODAY.getFullYear();
+    set({ cMsg: 'Submitting…', crmError: '', cfErrors: [] });
+    CPS.nextNumber(year).then(function (n) {
+      var number = 'CMP-' + year + '-' + String(n).padStart(3, '0');
+      var doc = { number: number, acc: f.acc || '', lead: f.lead || '', company: (f.company || '').trim(),
+        contactName: (f.contactName || '').trim(), contactEmail: (f.contactEmail || '').trim(), contactPhone: (f.contactPhone || '').trim(),
+        category: f.category || COMPLAINT_CATEGORIES[0], orderRef: (f.orderRef || '').trim(), product: (f.product || '').trim(),
+        occurredOn: f.occurredOn || '', description: (f.description || '').trim(), desiredOutcome: (f.desiredOutcome || '').trim(),
+        status: 'Submitted', owner: (f.owner || '').trim(), submittedAt: new Date().toISOString(), submittedBy: VIEWER.name || 'Staff, logged on the customer’s behalf',
+        history: [stamp('Logged by staff' + (f.company ? ' for ' + f.company : ''))] };
+      return CPS.saveComplaint(id, doc);
+    }).then(function () { st.cf = null; set({ view: 'complaint', complaintId: id, cMsg: '' }); window.scrollTo(0, 0); })
+      .catch(function (e) { set({ cMsg: '', crmError: e && e.code === 'busy' ? 'Another complaint is being numbered right now. Try again in a moment.' : 'That did not save. Check your connection and try again.' }); });
+  }
+  function complaintAction(act, el) {
+    var id = st.complaintId, c = COMPLAINTS[id];
+    if (act === 'new') { st.cf = blankComplaint(); st.cfErrors = []; return set({ view: 'complaintNew', crmError: '' }); }
+    if (act === 'create') return createComplaint(st.cf || {});
+    if (!c) return;
+    var save = function (patch, what) {
+      var doc = Object.assign({}, c, patch, { history: (c.history || []).concat([stamp(what)]) });
+      return CPS.saveComplaint(id, doc).then(function () { set({ cPanel: null, cMsg: '', crmError: '' }); }, function () { set({ crmError: 'That did not save. Check your connection and access.' }); });
+    };
+    if (act === 'close') return set({ cPanel: null, crmError: '' });
+    if (act === 'review') return save({ status: 'Under review' }, (c.owner || 'The rep') + ' started reviewing');
+    if (act === 'decline-open') return set({ cPanel: 'decline', cdf: {} });
+    if (act === 'decline') {
+      var reason = ((st.cdf || {}).reason || '').trim();
+      if (!reason) return set({ crmError: 'Add a reason for the customer record.' });
+      return save({ status: 'Declined', declineReason: reason }, 'Declined · “' + reason + '”');
+    }
+    if (act === 'accept-open') return set({ cPanel: 'accept', caf: { resolution: c.resolution || '' } });
+    if (act === 'accept-submit') {
+      var res = ((st.caf || {}).resolution || '').trim();
+      if (!res) return set({ crmError: 'Describe the resolution you’re proposing.' });
+      return save({ status: 'Awaiting GM approval', proposedAt: new Date().toISOString(), resolution: res }, 'Proposed accepting · sent to ' + APPROVER.name + ' for approval');
+    }
+    if (act === 'approve') {
+      var at = new Date().toISOString();
+      var approval = { decision: 'approved', at: at, by: ME || null, byLabel: ME ? '' : (VIEWER.name || 'this computer'), comment: ((st.gaf || {}).comment || '').trim() };
+      set({ cMsg: 'Approving…', crmError: '' });
+      return CPS.saveApproval(id, approval).then(function () {
+        return save({ status: 'Accepted', approvedAt: at }, 'Approved by ' + APPROVER.name + (approval.comment ? ' · “' + approval.comment + '”' : ''));
+      }).then(function () { set({ cMsg: '' }); }).catch(function (e) {
+        set({ cMsg: '', crmError: e && e.code === 'invalid_argument' ? 'Only ' + APPROVER.name + ' (Editor access) can approve.' : 'The approval did not save. Check your connection and try again.' });
+      });
+    }
+    if (act === 'return') {
+      var comment = ((st.gaf || {}).comment || '').trim();
+      if (!comment) return set({ crmError: 'Add a comment so the rep knows what to change.' });
+      var a2 = { decision: 'returned', at: new Date().toISOString(), by: ME || null, byLabel: ME ? '' : (VIEWER.name || 'this computer'), comment: comment };
+      return CPS.saveApproval(id, a2).then(function () { return save({}, 'Sent back by ' + APPROVER.name + ' · “' + comment + '”'); });
+    }
+    if (act === 'resolve') return save({ status: 'Resolved' }, 'Marked resolved');
   }
 
   function termsList() { return (QTERMS && QTERMS.clauses && QTERMS.clauses.length) ? QTERMS.clauses : DEFAULT_TERMS; }
@@ -1490,7 +1798,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     return '<button class="back" data-go="quotes">← Quotes</button>' +
       '<div class="card-head" style="align-items:flex-end"><div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1>' + esc(quoteNo(q)) + '</h1>' + qBadge(s) + '</div>' +
       '<p class="sub">' + esc(q.company) + ' · prepared by ' + esc(personName(q.owner, q.ownerLabel)) + link + '</p></div>' +
-      '<div style="text-align:right"><div style="font-family:var(--cond);font-weight:700;font-size:26px;color:var(--heading)">' + esc(short(num(q.price) * num(q.volume))) + '<span class="small muted" style="font-family:var(--sans);font-weight:400"> / yr</span></div><div class="tiny">internal only, not on the quote</div></div></div>' +
+      '<div style="text-align:right"><div style="font-family:var(--cond);font-weight:700;font-size:26px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.3)">' + esc(short(num(q.price) * num(q.volume))) + '<span class="small" style="font-family:var(--sans);font-weight:400;color:rgba(255,255,255,.78)"> / yr</span></div><div class="tiny" style="color:rgba(255,255,255,.7)">internal only, not on the quote</div></div></div>' +
       panel + (needsProfile ? myDetailsCard() : '') +
       '<div style="display:flex;gap:8px;flex-wrap:wrap">' + actions.join('') + '</div>' +
       (st.qMsg ? '<p class="small" style="margin:0;color:var(--heading)">' + esc(st.qMsg) + '</p>' : '') +
@@ -1946,6 +2254,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
           ? it('contracts', 'Contracts & price reviews', 'Expiry alerts and price-review sign-off from the Key Contracts Register', 'preview', String(contractAlerts().length || 'OK'))
           : it('agreements', 'Supply agreements', 'Contracted vs delivered tonnes', 'planned'),
         it('quotes', 'Quotes', 'Branded supply quotes, GM approval, PDF and email draft', 'preview', String(quoteBadge())),
+        it('complaints', 'Complaint log', 'Customer complaints: status and who owns the next step', 'preview', String(complaintBadge())),
         it('forecast', 'Forecast', 'SAP run rate plus weighted pipeline', 'planned'),
         it('automation', 'Automation rules', 'Tasks and alerts on events', 'planned')] },
       { name: 'Stage 3 · AI & links', tag: 'Planned', cls: 'tag-plan', items: [
@@ -1961,6 +2270,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     if (st.view === 'contract') return 'contracts';
     if (st.view === 'prospect' || st.view === 'prospectNew') return 'prospects';
     if (st.view === 'quote' || st.view === 'quoteEdit' || st.view === 'quoteTerms') return 'quotes';
+    if (st.view === 'complaint' || st.view === 'complaintNew') return 'complaints';
     if (st.view === 'planned') return 'plan-' + st.planId;
     return st.view;
   }
@@ -1993,6 +2303,10 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       '</div>';
   }
   function actBadge(a) { return '<span class="badge b-' + a.kind + '">' + esc(a.due) + '</span>'; }
+  function initials(label) {
+    var words = label.split(/\s+/).filter(function (w) { return /^[A-Za-z]/.test(w); });
+    return words.length > 1 ? (words[0][0] + words[1][0]).toUpperCase() : label.slice(0, 2).toUpperCase();
+  }
 
   // ---------- Views ----------
   function contractAttention() {
@@ -2085,6 +2399,120 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       c.lines.map(function (l) { return '<tr><td>' + esc(l.services) + '</td><td>' + esc(l.item || '—') + '</td><td class="num">' + (l.rate != null ? esc(l.rate.toLocaleString('en-NZ', { maximumFractionDigits: 4 })) : '—') + '</td><td>' + esc(l.uom || '') + '</td></tr>'; }).join('') +
       '</tbody></table></div></section>';
   }
+  function acceptPanel(c) {
+    return '<label class="small muted" for="caf-resolution" style="display:block;margin-top:10px">Resolution to propose</label>' +
+      '<textarea id="caf-resolution" data-caf="resolution" rows="3" placeholder="e.g. Credit note for the short delivery; replacement bags sent on the next run">' + esc((st.caf || {}).resolution || '') + '</textarea>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-cta" data-cact="accept-submit">Send to ' + esc(APPROVER.name) + ' for approval</button><button class="btn btn-quiet" data-cact="close">Cancel</button></div>';
+  }
+  function declinePanel() {
+    return '<label class="small muted" for="cdf-reason" style="display:block;margin-top:10px">Reason (kept on the record)</label>' +
+      '<textarea id="cdf-reason" data-cdf="reason" rows="2">' + esc((st.cdf || {}).reason || '') + '</textarea>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-olive" data-cact="decline">Confirm decline</button><button class="btn btn-quiet" data-cact="close">Cancel</button></div>';
+  }
+  function complaintActionsBlock(c, s) {
+    if (s.key === 'Submitted') return '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn btn-olive" data-cact="review">Start review</button><button class="btn btn-quiet" data-cact="decline-open">Decline</button></div>';
+    if (s.key === 'Under review') {
+      if (st.cPanel === 'decline') return declinePanel();
+      if (st.cPanel === 'accept') return acceptPanel(c);
+      return '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn btn-cta" data-cact="accept-open">Propose accepting</button><button class="btn btn-quiet" data-cact="decline-open">Decline</button></div>';
+    }
+    if (s.key === 'Returned') {
+      if (st.cPanel === 'accept') return acceptPanel(c);
+      return '<div style="margin-top:10px"><button class="btn btn-olive" data-cact="accept-open">Edit and resubmit</button></div>';
+    }
+    if (s.key === 'Awaiting GM approval') {
+      if (!CAN_APPROVE) return '<p class="tiny" style="margin-top:10px">Waiting for ' + esc(APPROVER.name) + ' to approve.</p>';
+      return '<label class="small muted" for="gaf-comment" style="display:block;margin-top:10px">Comment (optional; sent back to the rep if returned)</label>' +
+        '<textarea id="gaf-comment" data-gaf="comment" rows="2">' + esc((st.gaf || {}).comment || '') + '</textarea>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-cta" data-cact="approve">Approve as ' + esc(APPROVER.name) + '</button><button class="btn btn-quiet" data-cact="return">Send back</button></div>';
+    }
+    if (s.key === 'Accepted') return '<div style="margin-top:10px"><button class="btn btn-olive" data-cact="resolve">Mark resolved</button></div>';
+    return '';
+  }
+  function vComplaints() {
+    var f = st.cFilter || '';
+    var ids = Object.keys(COMPLAINTS).sort(function (a, b) { return (COMPLAINTS[b].submittedAt || '') < (COMPLAINTS[a].submittedAt || '') ? -1 : 1; });
+    var shown = ids.filter(function (id) { return !f || complaintState(id, COMPLAINTS[id]).key === f; });
+    var counts = complaintCounts();
+    return '<div class="card-head" style="align-items:flex-end"><div><div class="eyebrow">Stage 2 · Run-rate · customer complaints</div><h1>Complaint log</h1><p class="sub">Customers submit a complaint from the portal; it goes to their sales rep, and every acceptance needs ' + esc(APPROVER.name) + '’s sign-off. ' + (CPS && CPS.mode === 'shared' ? 'Shared with everyone who uses this page.' : 'Saved in this browser only.') + '</p></div>' +
+      '<button class="btn btn-cta" data-cact="new">+ Log a complaint</button></div>' +
+      kpiGrid([
+        { label: 'Open', value: String(counts.open), note: 'being reviewed' },
+        { label: 'Awaiting GM approval', value: String(counts.waiting), note: 'pending ' + APPROVER.name },
+        { label: 'Resolved', value: String(counts.resolved), note: 'all time' },
+        { label: 'Total logged', value: String(counts.total), note: 'since launch' }
+      ]) +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">' + [''].concat(COMPLAINT_STAGES).concat(['Declined']).map(function (k) {
+        return '<button class="chip" data-cfilter="' + esc(k) + '" style="min-height:34px;padding:5px 12px' + (k === f ? ';background:var(--nf-forest);color:#fff;border-color:var(--nf-forest)' : '') + '">' + esc(k || 'All') + '</button>';
+      }).join('') + '</div>' +
+      '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Complaint</th><th>Company</th><th>Category</th><th>Status</th><th>Next step</th><th>Submitted</th></tr></thead><tbody>' +
+      shown.map(function (id) {
+        var c = COMPLAINTS[id], s = complaintState(id, c);
+        return '<tr><td><button class="lnk" data-cmp="' + esc(id) + '">' + esc(c.number || 'New') + '</button></td><td>' + esc(c.company) + '</td><td>' + esc(c.category) + '</td><td>' + cBadge(s) + '</td><td class="small">' + esc(complaintNextStep(c, s)) + '</td><td>' + esc(c.submittedAt ? longDate(c.submittedAt.slice(0, 10)) : '—') + '</td></tr>';
+      }).join('') + (shown.length ? '' : '<tr><td colspan="6" class="muted">No complaints' + (f ? ' with this status' : ' logged yet') + '.</td></tr>') + '</tbody></table></div>';
+  }
+  function vComplaint() {
+    var id = st.complaintId, c = COMPLAINTS[id];
+    if (!c) return '<button class="back" data-go="complaints">← Complaint log</button><p class="muted">This complaint is not available. It may still be loading.</p>';
+    var s = complaintState(id, c);
+    var idx = COMPLAINT_STAGES.indexOf(s.key === 'Returned' ? 'Awaiting GM approval' : s.key);
+    var acct = c.acc ? ACC.filter(function (a) { return a.id === c.acc; })[0] : null;
+    return '<button class="back" data-go="complaints">← Complaint log</button>' +
+      '<div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1>' + esc(c.number || 'New') + '</h1>' + cBadge(s) + '</div>' +
+      '<p class="sub">' + esc(c.company) + ' · ' + esc(c.category) + (acct ? ' · <button class="lnk" data-acc="' + esc(acct.id) + '">Open account</button>' : '') + '</p></div>' +
+      (c.status !== 'Declined' ? '<div class="steps">' + COMPLAINT_STAGES.map(function (stg, i) { return '<div class="step' + (i < idx ? ' done' : i === idx ? ' cur' : '') + '">' + esc(stg) + '</div>'; }).join('') + '</div>'
+        : '<div class="card" style="border-left:4px solid var(--alert-ink)"><strong>Declined.</strong> ' + esc(c.declineReason || '') + '</div>') +
+      '<div class="card" style="border-left:4px solid var(--nf-olive)"><strong>Next step:</strong> ' + esc(complaintNextStep(c, s)) + '</div>' +
+      (st.crmError ? '<p class="small" style="color:var(--alert-ink);margin:0">' + esc(st.crmError) + '</p>' : '') +
+      '<div class="grid g-2"><section class="card"><h2 style="margin-bottom:8px">Complaint details</h2>' +
+      [['Submitted', (c.submittedAt ? longDate(c.submittedAt.slice(0, 10)) : '—') + (c.submittedBy ? ' · ' + c.submittedBy : '')],
+        ['Order / invoice ref', c.orderRef || '—'], ['Product', c.product || '—'], ['Occurred on', c.occurredOn ? longDate(c.occurredOn) : '—'],
+        ['Contact', [c.contactName, c.contactEmail, c.contactPhone].filter(Boolean).join(' · ') || '—'], ['Owner (sales rep)', c.owner || 'Unassigned']]
+        .map(function (f) { return '<div class="kv"><span class="muted">' + f[0] + '</span><span>' + esc(f[1]) + '</span></div>'; }).join('') +
+      '<p class="small" style="margin-top:10px"><strong>What happened:</strong> ' + esc(c.description || '') + '</p>' +
+      (c.desiredOutcome ? '<p class="small" style="margin-top:6px"><strong>Customer wants:</strong> ' + esc(c.desiredOutcome) + '</p>' : '') + '</section>' +
+      '<section class="card"><h2 style="margin-bottom:8px">Resolution &amp; approval</h2>' +
+      (c.resolution ? '<div class="kv"><span class="muted">Proposed resolution</span><span>' + esc(c.resolution) + '</span></div>' : '') +
+      (s.key === 'Returned' ? '<p class="small" style="margin:8px 0">' + esc(APPROVER.name) + ' sent this back: “' + esc((s.ap && s.ap.comment) || '') + '”</p>' : '') +
+      complaintActionsBlock(c, s) + '</section></div>' +
+      '<section class="card"><h2 style="margin-bottom:8px">History</h2>' + (c.history || []).slice().reverse().map(function (h) {
+        return '<div class="row small"><span style="flex:none;width:90px;font-weight:700;color:var(--nf-olive)">' + esc(longDate(h.at.slice(0, 10))) + '</span><div>' + esc(h.what) + '</div></div>';
+      }).join('') + '</section>';
+  }
+  function vComplaintNew() {
+    var f = st.cf || (st.cf = blankComplaint());
+    return '<button class="back" data-go="complaints">← Complaint log</button>' +
+      '<div><div class="eyebrow">Stage 2 · Run-rate · customer complaints</div><h1>Log a complaint</h1><p class="sub">For a complaint that came in by phone or email. The portal’s customer-facing form creates these the same way.</p></div>' +
+      (st.crmError ? '<p class="small" style="color:var(--alert-ink);margin:0">' + esc(st.crmError) + '</p>' : '') +
+      (st.cfErrors && st.cfErrors.length ? '<div class="card err-card">' + st.cfErrors.map(function (e) { return '<div>' + esc(e) + '</div>'; }).join('') + '</div>' : '') +
+      '<section class="card"><h2 style="margin-bottom:10px">Company and contact</h2><div class="form-grid">' +
+      field('cf-company', 'Company', '<input id="cf-company" class="in" list="cf-company-list" data-cf="company" value="' + esc(f.company || '') + '" placeholder="Start typing a customer or prospect name">' +
+        '<datalist id="cf-company-list">' + companyDirectory().map(function (o) { return '<option value="' + esc(o.name) + '">'; }).join('') + '</datalist>', true, complaintCompanyHint(f)) +
+      field('cf-owner', 'Sales rep (owner)', inp('cf-owner', 'cf:owner', f)) +
+      field('cf-contactName', 'Contact name', inp('cf-contactName', 'cf:contactName', f)) +
+      field('cf-contactEmail', 'Contact email', inp('cf-contactEmail', 'cf:contactEmail', f, ' type="email"')) +
+      field('cf-contactPhone', 'Contact phone', inp('cf-contactPhone', 'cf:contactPhone', f)) + '</div></section>' +
+      '<section class="card"><h2 style="margin-bottom:10px">What happened</h2><div class="form-grid">' +
+      field('cf-category', 'Category', sel('cf-category', 'cf:category', f, COMPLAINT_CATEGORIES)) +
+      field('cf-orderRef', 'Order / invoice ref (optional)', inp('cf-orderRef', 'cf:orderRef', f)) +
+      field('cf-product', 'Product (optional)', inp('cf-product', 'cf:product', f)) +
+      field('cf-occurredOn', 'Date it happened', inp('cf-occurredOn', 'cf:occurredOn', f, ' type="date"')) + '</div>' +
+      '<label for="cf-description" style="display:block;margin-top:10px;font-size:13px;font-weight:600;color:var(--ink-2)">What happened <span class="req">*</span></label>' +
+      '<textarea id="cf-description" data-cf="description" rows="3">' + esc(f.description || '') + '</textarea>' +
+      '<label for="cf-desiredOutcome" style="display:block;margin-top:10px;font-size:13px;font-weight:600;color:var(--ink-2)">What the customer wants (optional)</label>' +
+      '<textarea id="cf-desiredOutcome" data-cf="desiredOutcome" rows="2">' + esc(f.desiredOutcome || '') + '</textarea></section>' +
+      '<div style="display:flex;gap:8px"><button class="btn btn-cta" data-cact="create">Log complaint</button><button class="btn btn-quiet" data-go="complaints">Cancel</button></div>';
+  }
+  function complaintAttention() {
+    var ids = Object.keys(COMPLAINTS).filter(function (id) { var k = complaintState(id, COMPLAINTS[id]).key; return k === 'Submitted' || k === 'Under review' || k === 'Returned' || (k === 'Awaiting GM approval' && CAN_APPROVE); });
+    if (!ids.length) return '';
+    ids.sort(function (a, b) { return (COMPLAINTS[a].submittedAt || '') < (COMPLAINTS[b].submittedAt || '') ? -1 : 1; });
+    return '<section class="card"><div class="card-head"><h2>Complaints needing action</h2><button class="back" data-go="complaints">Complaint log</button></div>' +
+      ids.slice(0, 5).map(function (id) {
+        var c = COMPLAINTS[id], s = complaintState(id, c);
+        return '<button class="feat" data-cmp="' + esc(id) + '" style="margin-top:10px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="t">' + esc(c.company) + '</span>' + cBadge(s) + '</div><div class="d small">' + esc(c.category) + ' · ' + esc(complaintNextStep(c, s)) + '</div></button>';
+      }).join('') + '</section>';
+  }
   function normName(s) { return (s || '').toLowerCase().replace(/\(.*?\)/g, '').replace(/\b(ltd|limited|nz|the|school|college|primary|inc)\b/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
   function matchAccount(company) {
     var n = normName(company);
@@ -2118,20 +2546,29 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       '<p class="tiny" style="margin:12px 0 0">Contracts ending within 6 months, from the sales plan.</p></section>';
   }
   function vHome() {
+    // iOS-style frosted glass home: floating translucent tiles over a soft colour wallpaper.
     var today = ACTS.filter(function (a) { return a.kind === 'over' || a.kind === 'today'; });
     var sub = REAL ? 'Sales data to ' + longDate(REAL.meta.asOf) + ' · ' + REAL.kpis[2].value + ' active customers · ' + REAL.ending.length + ' contract' + (REAL.ending.length === 1 ? '' : 's') + ' ending soon'
       : 'Friday 9 October 2026 · 3 tasks due today · 1 deal needs attention';
-    return '<div class="hero">' + SWOOSH + '<h1>Kia ora' + (VIEWER.first ? ', ' + esc(VIEWER.first) : '') + '</h1><p>' + esc(sub) + '</p></div>' +
-      kpiGrid(KPIS) +
-      '<div class="grid g-2">' +
+    var tint = ['130,165,25', '205,200,150', '29,51,47'];
+    return '<div class="hv2">' +
+      '<div class="hv2-hero">' + SWOOSH + '<div class="eyebrow">Fuelling your future</div><h1>Kia ora' + (VIEWER.first ? ', ' + esc(VIEWER.first) : '') + '</h1><p>' + esc(sub) + '</p></div>' +
+      '<div class="hv2-kpis">' + KPIS.map(function (k) {
+        return '<div class="hv2-kpi' + (k.src ? ' src' : '') + '"><div class="l">' + esc(k.label) + '</div><div class="v">' + esc(k.value) + '</div><div class="n">' + esc(k.note) + '</div></div>';
+      }).join('') + '</div>' +
+      '<div class="grid g-2 hv2-panels">' +
       '<section class="card"><div class="card-head"><h2>My day</h2>' + (REAL ? '<span class="pill pill-soon">sample</span>' : '') + '<button class="back" data-go="activities">All activities</button></div>' +
       today.map(function (a) { return '<div class="row">' + actBadge(a) + '<div><div style="font-weight:600">' + esc(a.type) + ': ' + esc(a.what) + '</div><div class="small muted">' + esc(a.acc) + '</div></div></div>'; }).join('') + '</section>' +
-      quotesAttention() + prospectAttention() + attentionCard() + contractAttention() + '</div>' +
-      '<section style="display:flex;flex-direction:column;gap:12px"><div class="card-head"><h2>Feature tree</h2><span class="small muted">Click any feature to open it</span></div>' +
-      '<div class="grid g-3">' + tree().map(function (g) {
-        return '<div class="stage-card"><div class="hd"><span>' + esc(g.name) + '</span><span class="tag ' + g.cls + '">' + esc(g.tag) + '</span></div>' +
-          g.items.map(function (it) { return '<button class="feat" ' + navAttrs(it) + '><div class="t">' + esc(it.label) + '</div><div class="d">' + esc(it.desc) + '</div></button>'; }).join('') + '</div>';
-      }).join('') + '</div></section>';
+      quotesAttention() + prospectAttention() + attentionCard() + contractAttention() + complaintAttention() + '</div>' +
+      '<section class="hv2-tree"><div class="card-head"><h2>Feature tree</h2><span class="small muted" style="color:#C4D2B6">Tap a tile to open it</span></div>' +
+      tree().map(function (g, gi) {
+        return '<div class="hv2-group"><div class="hv2-ghead">' + esc(g.name) + '<span class="tag ' + g.cls + '">' + esc(g.tag) + '</span></div>' +
+          '<div class="hv2-apps">' + g.items.map(function (it) {
+            return '<button class="hv2-app" ' + navAttrs(it) + ' style="--tint:' + tint[gi] + '" title="' + esc(it.desc) + '">' +
+              (it.badge ? '<span class="hv2-badge">' + esc(it.badge) + '</span>' : '') +
+              '<span class="hv2-ico"><span class="hv2-ico-t">' + esc(initials(it.label)) + '</span></span><span class="hv2-lbl">' + esc(it.label) + '</span></button>';
+          }).join('') + '</div></div>';
+      }).join('') + '</section></div>';
   }
   function vPipeline() {
     var pds = prospectDeals();
@@ -2145,7 +2582,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     }).join('');
     var note = REAL ? 'Prospects you add sit alongside the sales plan (enquiries → Enquiry, prospects → Proposal, contracted and repeat → Supplying). Values are per year.' : 'Prospects you add appear here with the sample deals.';
     return '<div class="card-head" style="align-items:flex-end"><div><div class="eyebrow">Stage 1 · Core · supply agreements</div><h1>Pipeline</h1><p class="sub">' + OPEN.length + ' open agreements · ' + short(OPEN_V) + '/yr · ' + Math.round(OPEN_T).toLocaleString('en-NZ') + ' t/yr</p></div>' +
-      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px"><button class="btn btn-cta" data-go="prospectNew">+ New prospect</button><span class="small muted" style="max-width:46ch;text-align:right">' + note + '</span></div></div>' +
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px"><button class="btn btn-cta" data-go="prospectNew">+ New prospect</button><span class="small" style="max-width:46ch;text-align:right;color:rgba(255,255,255,.78)">' + note + '</span></div></div>' +
       '<div class="board"><div class="board-in">' + cols + '</div></div>';
   }
   function vAccounts() {
@@ -2243,12 +2680,12 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
         ORDERS.map(function (o) { return '<tr><td style="font-weight:600">' + o.no + '</td><td><button class="lnk" data-acc="' + o.acc + '">' + esc(o.cust) + '</button></td><td>' + esc(o.product) + '</td><td class="num">' + o.qty + '</td><td>' + o.date + '</td><td>' + o.status + '</td></tr>'; }).join('') +
         '</tbody></table></div>'
         : '<div class="card"><p class="muted" style="margin:0">The model holds invoices only. Open sales orders need SAP tables ORDR and RDR1 added to the Power BI dataflow (see GAPS.md).</p></div>') + '</section>' +
-      '<p class="small muted" style="margin:0">Sales history and run rate per customer sit on each account page. Nothing here is edited in the CRM: SAP stays the system of record.</p>';
+      '<p class="small" style="margin:0;color:rgba(255,255,255,.78)">Sales history and run rate per customer sit on each account page. Nothing here is edited in the CRM: SAP stays the system of record.</p>';
   }
   function vComms() {
     return '<div style="max-width:900px;display:flex;flex-direction:column;gap:18px"><div><div class="eyebrow">Stage 2 · Run-rate · preview</div><h1>Customer comms</h1>' + (REAL ? '<span class="pill pill-soon">sample data</span>' : '') + '<p class="sub">Emails and Teams meetings with customer contacts, matched to accounts through Microsoft Graph. Your mailbox only.</p></div>' +
       '<div class="card" style="padding-top:4px">' + COMMS.map(function (c) { return commItem(c, true); }).join('') + '</div>' +
-      '<p class="small muted" style="margin:0">Teams summaries come from meeting transcripts, so they only appear where transcription was on. Drafts are written by the sales agent (Stage 3) and sent only by you, from Outlook.</p></div>';
+      '<p class="small" style="margin:0;color:rgba(255,255,255,.78)">Teams summaries come from meeting transcripts, so they only appear where transcription was on. Drafts are written by the sales agent (Stage 3) and sent only by you, from Outlook.</p></div>';
   }
   function vDeal() {
     var d = dealX(DEALS.filter(function (x) { return x.id === st.dealId; })[0] || DEALS[0]);
@@ -2256,7 +2693,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     var fields = [['Stage', d.stage + ' (' + d.prob + '%)'], ['Volume', tf(d.t)], ['Value', nz(d.v) + ' / yr'], ['Product', d.product], ['Expected close', d.close], ['Next step', d.next]];
     return '<button class="back" data-go="pipeline">← Pipeline</button>' +
       '<div class="card-head" style="align-items:flex-end"><div><h1>' + esc(d.name) + '</h1><p class="sub">' + (d.acc ? '<button class="lnk" data-acc="' + esc(d.acc) + '">' + esc(d.accName) + '</button>' : esc(d.accName) + ' <span class="tiny">(not matched to a SAP customer)</span>') + ' · Owner ' + esc(d.owner) + '</p></div>' +
-      '<div style="font-family:var(--cond);font-weight:700;font-size:28px;color:var(--heading)">' + esc(d.valueFmt) + '<span class="small muted" style="font-family:var(--sans);font-weight:400"> / yr</span></div></div>' +
+      '<div style="font-family:var(--cond);font-weight:700;font-size:28px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.3)">' + esc(d.valueFmt) + '<span class="small" style="font-family:var(--sans);font-weight:400;color:rgba(255,255,255,.78)"> / yr</span></div></div>' +
       '<div class="steps">' + STAGES.map(function (s, i) { return '<div class="step' + (i < idx ? ' done' : i === idx ? ' cur' : '') + '">' + esc(s) + '</div>'; }).join('') + '</div>' +
       '<div class="grid g-2"><section class="card"><h2 style="margin-bottom:10px">Details</h2>' + fields.map(function (f) { return '<div class="kv"><span class="muted">' + esc(f[0]) + '</span><span>' + esc(f[1]) + '</span></div>'; }).join('') + '</section>' +
       '<section class="card"><h2 style="margin-bottom:10px">Timeline</h2>' + d.timeline.map(function (t) {
@@ -2297,7 +2734,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       '<section class="card"><h2 style="margin-bottom:6px">What it will do</h2><ul style="margin:0;padding-left:20px;line-height:1.7">' + p.bullets.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul></section>' +
       '<section class="plan-ex"><div class="eyebrow">Example</div><p style="margin:6px 0 0;font-size:16px">' + esc(p.example) + '</p></section></div>';
   }
-  var VIEWS = { home: vHome, pipeline: vPipeline, accounts: vAccounts, account: vAccount, data: vData, comms: vComms, deal: vDeal, activities: vActivities, products: vProducts, dashboard: vDashboard, planned: vPlanned, contracts: vContracts, contract: vContract, prospects: vProspects, prospect: vProspect, prospectNew: vProspectNew, quotes: vQuotes, quote: vQuote, quoteEdit: vQuoteEdit, quoteTerms: vQuoteTerms };
+  var VIEWS = { home: vHome, pipeline: vPipeline, accounts: vAccounts, account: vAccount, data: vData, comms: vComms, deal: vDeal, activities: vActivities, products: vProducts, dashboard: vDashboard, planned: vPlanned, contracts: vContracts, contract: vContract, prospects: vProspects, prospect: vProspect, prospectNew: vProspectNew, quotes: vQuotes, quote: vQuote, quoteEdit: vQuoteEdit, quoteTerms: vQuoteTerms, complaints: vComplaints, complaint: vComplaint, complaintNew: vComplaintNew };
   function quoteBadge() {
     var ids = Object.keys(QUOTES);
     var waiting = ids.filter(function (id) { return quoteState(id, QUOTES[id]).key === 'Awaiting approval'; }).length;
@@ -2523,10 +2960,11 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       ? '<div class="source-bar"><strong>Real data</strong> · ' + esc(REAL.meta.source) + ' · invoices to ' + esc(longDate(REAL.meta.asOf)) + ' · pipeline from the sales plan · activities, comms and chat are samples · contains customer data: share only within Nature’s Flame</div>'
       : '';
     document.getElementById('app').innerHTML =
-      '<header class="top"><a class="brand" href="#" data-go="home">' + MARK + '<div><div class="name">Rolly</div><div class="by">Nature’s Flame CRM</div></div></a>' +
+      '<header class="top"><button class="navtoggle" data-nav="open" aria-label="Open menu"><span></span><span></span><span></span></button><a class="brand" href="#" data-go="home">' + MARK + '<div><div class="name">Rolly</div><div class="by">Nature’s Flame CRM</div></div></a>' +
       '<div class="search"><input type="search" aria-label="Search accounts, deals and contacts" placeholder="Search accounts, deals, contacts"></div>' +
       '<div class="top-right"><button class="btn btn-cta" data-go="prospectNew">+ New prospect</button>' + avatarHtml() + '</div></header>' + source +
-      '<div class="body"><nav class="side" aria-label="Feature tree">' + side +
+      '<div class="body"><div class="nav-backdrop' + (st.navOpen ? ' show' : '') + '" data-nav="close"></div><nav class="side' + (st.navOpen ? ' side-open' : '') + '" aria-label="Feature tree">' +
+      '<button class="side-close" data-nav="close" aria-label="Close menu">Close ×</button>' + side +
       '<div style="padding:0 10px"><div class="eyebrow" style="font-size:12.5px;padding-bottom:8px">Stage 4 · Customer portal</div><a class="portal-link" href="portal.html">See what a customer sees →</a></div>' +
       '<div class="side-foot">' + (REAL ? 'Customers, sales, stock, prices and the pipeline are real SAP and sales-plan data. Activities, comms and the portal are samples.' : 'Mock-up for discussion. All names, prices and figures are fictitious.') + '</div></nav>' +
       '<main id="main">' + (VIEWS[st.view] || vHome)() + '</main></div>' + vChat();
@@ -2545,7 +2983,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
 
   // ---------- Events ----------
   document.addEventListener('click', function (e) {
-    var el = e.target.closest('[data-go],[data-plan],[data-deal],[data-acc],[data-draft],[data-chat],[data-sugg],[data-seg],[data-con],[data-ctype],[data-rv-open],[data-rv-save],[data-rv-cancel],[data-lead],[data-lstage],[data-lact],[data-pfilter],[data-quote],[data-qact],[data-qfilter],[data-qnew-lead],[data-qnew-acc],[data-qnew-prospect]');
+    var el = e.target.closest('[data-go],[data-plan],[data-deal],[data-acc],[data-draft],[data-chat],[data-sugg],[data-seg],[data-con],[data-ctype],[data-rv-open],[data-rv-save],[data-rv-cancel],[data-lead],[data-lstage],[data-lact],[data-pfilter],[data-quote],[data-qact],[data-qfilter],[data-qnew-lead],[data-qnew-acc],[data-qnew-prospect],[data-nav],[data-cmp],[data-cact],[data-cfilter]');
     if (!el) return;
     var ds = el.dataset;
     if (ds.lead) { set({ view: 'prospect', leadId: ds.lead, lPanel: null, crmError: '', copyMsg: '', copyFallback: false, af: null, sf: null }); window.scrollTo(0, 0); return; }
@@ -2558,21 +2996,28 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     if (ds.qnewLead) { st.qf = quoteFromLead(ds.qnewLead); st.qEditId = null; st.qfErrors = []; set({ view: 'quoteEdit', crmError: '' }); window.scrollTo(0, 0); return; }
     if (ds.qnewAcc) { st.qf = quoteFromAccount(ds.qnewAcc); st.qEditId = null; st.qfErrors = []; set({ view: 'quoteEdit', crmError: '' }); window.scrollTo(0, 0); return; }
     if (ds.qnewProspect !== undefined) { st.pf = Object.assign(blankProspect(), { company: ds.qnewProspect }); st.pfEditId = null; st.pfErrors = []; set({ view: 'prospectNew', crmError: '' }); window.scrollTo(0, 0); return; }
+    if (ds.cmp) { set({ view: 'complaint', complaintId: ds.cmp, cPanel: null, cMsg: '', crmError: '' }); window.scrollTo(0, 0); return; }
+    if (ds.cact) { complaintAction(ds.cact, el); return; }
+    if ('cfilter' in ds) { set({ cFilter: ds.cfilter }); return; }
     if (ds.go === 'quoteTerms') { st.qt = null; st.qMsg = ''; }
     if (ds.go === 'quote' && !QUOTES[st.quoteId]) ds = { go: 'quotes' };
     if (ds.go === 'prospectNew' && st.view !== 'prospectNew') { st.pf = blankProspect(); st.pfEditId = null; st.pfErrors = []; st.crmError = ''; }
     if (ds.go === 'prospect' && !LEADS[st.leadId]) ds = { go: 'prospects' };
+    if (ds.go === 'complaintNew' && st.view !== 'complaintNew') { st.cf = blankComplaint(); st.cfErrors = []; st.crmError = ''; }
+    if (ds.go === 'complaint' && !COMPLAINTS[st.complaintId]) ds = { go: 'complaints' };
     if ('seg' in ds) set({ accSeg: ds.seg });
     else if ('ctype' in ds) set({ conType: ds.ctype });
     else if (ds.con) { set({ view: 'contract', conKey: ds.con, rvOpen: null, rvError: '' }); window.scrollTo(0, 0); }
     else if (ds.rvOpen) { set({ rvOpen: ds.rvOpen, rvRate: '', rvNote: '', rvError: '', view: 'contract', conKey: ds.rvOpen.split('|')[0] }); var ri = document.getElementById('rv-rate'); if (ri) ri.focus(); }
     else if (ds.rvSave) { var p = ds.rvSave.split('|'); saveReview(p[0], p[1]); }
     else if (ds.rvCancel) set({ rvOpen: null, rvError: '' });
-    else if (ds.go) { e.preventDefault(); set({ view: ds.go }); window.scrollTo(0, 0); }
-    else if (ds.plan) { set({ view: 'planned', planId: ds.plan }); window.scrollTo(0, 0); }
-    else if (ds.deal) { set({ view: 'deal', dealId: ds.deal }); window.scrollTo(0, 0); }
-    else if (ds.acc) { set({ view: 'account', accId: ds.acc }); window.scrollTo(0, 0); }
+    else if (ds.go) { e.preventDefault(); set({ view: ds.go, navOpen: false }); window.scrollTo(0, 0); }
+    else if (ds.plan) { set({ view: 'planned', planId: ds.plan, navOpen: false }); window.scrollTo(0, 0); }
+    else if (ds.deal) { set({ view: 'deal', dealId: ds.deal, navOpen: false }); window.scrollTo(0, 0); }
+    else if (ds.acc) { set({ view: 'account', accId: ds.acc, navOpen: false }); window.scrollTo(0, 0); }
     else if (ds.draft) { var m = Object.assign({}, st.drafts); m[ds.draft] = !m[ds.draft]; set({ drafts: m }); }
+    else if (ds.nav === 'open') set({ navOpen: true });
+    else if (ds.nav === 'close') set({ navOpen: false });
     else if (ds.chat === 'open') set({ chatOpen: true });
     else if (ds.chat === 'close') set({ chatOpen: false });
     else if (ds.chat === 'reset') { if (AI_CTL && st.thinking) AI_CTL.abort(); set({ msgs: [], thinking: false }); }
@@ -2623,6 +3068,14 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       else if (d.qd) (st.qdf = st.qdf || {})[d.qd] = v;
       else if (d.ap) (st.apf = st.apf || {})[d.ap] = v;
       else if (d.qt) { var pr = d.qt.split(':'); if (st.qt && st.qt[+pr[0]]) st.qt[+pr[0]][pr[1]] = v; }
+      else if (d.cf) {
+        var cf = st.cf = st.cf || blankComplaint();
+        cf[d.cf] = v;
+        if (d.cf === 'company') { var ccm = companyMatch(v); if (ccm) { applyCompanyToComplaint(cf, ccm); render(); } else { delete cf.acc; delete cf.lead; } }
+      }
+      else if (d.caf) (st.caf = st.caf || {})[d.caf] = v;
+      else if (d.cdf) (st.cdf = st.cdf || {})[d.cdf] = v;
+      else if (d.gaf) (st.gaf = st.gaf || {})[d.gaf] = v;
     }
   });
   document.addEventListener('change', function (e) {
@@ -2640,6 +3093,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   initViewer();
   initCrm();
   initQuotes();
+  initComplaints();
   initAI();
   // Real data: embedded by `build_artifact.py --with-data`, or read from the local
   // (git-ignored) data/ folder. Without either, the page stays on sample data.

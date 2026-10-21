@@ -77,8 +77,8 @@ Git: https://github.com/Nature-s-Flame/Rolly (branch `main`) — this repo is PU
   image when John's signature arrives. PDF via jsPDF 2.5.1 (cdnjs) with brand fonts fetched from `fonts/` (published as
   artifact files). Email draft = .eml with `X-Unsent: 1` (opens as a draft in classic Outlook); in the artifact it is
   wrapped in a .zip because the download allowlist excludes .eml. Standard terms are a proposed draft pending review.
-  Artifact capabilities now: `{db: {rules: [approvals write admin, settings write admin]}, user: {scopes: ["profile"]},
-  downloads: {}, sample: {}}` — omit `capabilities` on republish to keep them.
+  Artifact capabilities now: `{db: {rules: [approvals write admin, settings write admin, complaintApprovals write
+  admin]}, user: {scopes: ["profile"]}, downloads: {}, sample: {}}` — omit `capabilities` on republish to keep them.
 - Quote form rendering (fixed 15 Oct 2026): typing in the Quote form used to call the global `render()` on every
   keystroke (needed so the live preview pane updates as you type), which destroys and recreates every `<input>`,
   including the one being typed into — this silently reversed typed text in `type="email"` fields (no
@@ -112,6 +112,34 @@ Git: https://github.com/Nature-s-Flame/Rolly (branch `main`) — this repo is PU
   "Users can use the Power BI Model Context Protocol server endpoint (preview)" and an Entra app registration
   (redirect `https://claude.ai/api/mcp/auth_callback`, delegated `Dataset.Read.All`, `Workspace.Read.All`).
 - Production route: a backend calling the Power BI `executeQueries` REST API with a service principal or user sign-in.
+- Complaint log (added 20 Oct 2026): customers submit a complaint from the portal (`rolly/portal.html`'s
+  "Complaints" tab — in both `TABS`/`VIEWS` and `REAL_TABS`/`REAL_VIEWS`, so it works whether or not the real
+  snapshot has loaded); it lands on Rolly's "Complaint log" page (Stage 2 · Run-rate) for the account's sales rep
+  to work. States: `Submitted` → `Under review` → either `Declined` directly (no sign-off needed) or
+  `Awaiting GM approval` → `Accepted` → `Resolved`; a GM "send back" keeps status `Awaiting GM approval` but
+  displays as `Returned` until the rep edits and resubmits (`complaintApprovalOf`/`complaintState`, mirroring the
+  quotes `approvalOf`/`quoteState` pattern exactly). **Every acceptance needs sign-off from `APPROVER`** (the same
+  General Manager who approves quotes) — reusing `CAN_APPROVE` (set once in `initQuotes()`), so there's no separate
+  permission check to maintain. Storage: artifact db `complaints` (open write, like `quotes`/`leads`) and
+  `complaintApprovals` (admin-write only, like `approvals`, so only the GM's decision is tamper-proof) plus
+  `counters/complaints-YYYY` for `CMP-YYYY-NNN` numbering; locally, `rolly.complaints`/`rolly.complaintApprovals`/
+  `rolly.complaintCounter`. **portal.html duplicates the storage layer** (`uid`, `pLocal`/`pPut`, `initComplaints`,
+  the same collection/localStorage/counter names) since the two files don't share code — keep both in sync if this
+  changes. The portal only ever reads/writes a complaint's `status` field, never `complaintApprovals`, so a
+  customer never sees the internal "sent back for more detail" back-and-forth — they just see the status sitting
+  at "Awaiting approval" a little longer. Staff can also log a complaint manually (`+ Log a complaint` on the list
+  page, for phone-in complaints) via the same `companyDirectory()`/`companyMatch()` searchable-company pattern
+  used by the Quotes form. Surfaced on Home via `complaintAttention()`, alongside the
+  existing quotes/prospects/pipeline/contract attention cards.
+- Place an order (added 20 Oct 2026, portal-only): new first tab in `rolly/portal.html` (`TABS`/`REAL_TABS` key
+  `place`), a simple capture form — no GM-approval workflow, unlike complaints, since nothing in the brief called
+  for one. Product dropdown is built from the customer's own order history (`pdata().orders[].lines[].item`) plus
+  the generic `AVAIL` catalogue, so known products for that customer come first. "Deliver to" defaults to the
+  customer's own registered site with a "Somewhere else" option that reveals a free-text address field. Storage
+  mirrors the complaint log's pattern exactly but in its own collection/keys: db `orderRequests`, local
+  `rolly.orderRequests`/`rolly.orderRequestCounter`, numbered `REQ-YYYY-NNN` (deliberately distinct from real SAP
+  order numbers like `SO-xxxxx`, since these are unconfirmed requests waiting on the rep). No CRM-side review page
+  exists yet for these — only the customer's own "Your recent requests" list on the same tab.
 
 ## Renamed Roland → Rolly (16 Oct 2026)
 

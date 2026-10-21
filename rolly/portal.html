@@ -18,14 +18,14 @@
   --heading:#1D332F; --chip:#ECEFE6; --wordmark:#66783C; color-scheme:light;
   --alert-bg:#F6E3D8; --alert-ink:#8A3A16; --alert-bar:#B5532A; --amber-bar:#C9A227;
   --nf-green:#82A519; --nf-olive:#66783C; --nf-sage:#CDDCB9; --nf-sand:#CDC896; --nf-forest:#1D332F;
-  --bg:#F5F7F0; --surface:#FFFFFF; --surface-2:#FAFBF6; --line:#DDE3D2; --line-soft:#ECEFE4;
+  --bg:#101C17; --surface:rgba(255,255,255,.82); --surface-2:rgba(255,255,255,.62); --line:#DDE3D2; --line-soft:#ECEFE4;
   --ink:#1D2A26; --ink-2:#47534C; --ink-3:#5E6A62; --link:#55662F; --link-hover:#3E4C20;
   --sage-soft:#E6EEDA; --sand-soft:#EFEDD9; --sand-ink:#5B5524; --info-bg:#DDE7E4; --info-ink:#1D332F;
   --cond:"Open Sans Condensed","Open Sans",system-ui,sans-serif; --sans:"Open Sans",system-ui,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --heading:#DCE8CC; --wordmark:#A9C55A; --chip:#2A3A34;
-  --bg:#121D1A; --surface:#1A2925; --surface-2:#1F302B; --line:#30443D; --line-soft:#26372F;
+  --bg:#0D1613; --surface:rgba(26,41,37,.76); --surface-2:rgba(31,48,43,.6); --line:#30443D; --line-soft:#26372F;
   --ink:#E6ECE2; --ink-2:#B9C5B8; --ink-3:#97A598; --link:#A9C55A; --link-hover:#C3DB7A;
   --sage-soft:#24372C; --sand-soft:#3A3724; --sand-ink:#E2DCA8;
   --alert-bg:#4A2A1C; --alert-ink:#F2B9A0; --alert-bar:#D9774F; --amber-bar:#D8B84A; --info-bg:#233A36; --info-ink:#CFE3DD;
@@ -33,7 +33,7 @@
 }}
 :root[data-theme="dark"]{
   --heading:#DCE8CC; --wordmark:#A9C55A; --chip:#2A3A34;
-  --bg:#121D1A; --surface:#1A2925; --surface-2:#1F302B; --line:#30443D; --line-soft:#26372F;
+  --bg:#0D1613; --surface:rgba(26,41,37,.76); --surface-2:rgba(31,48,43,.6); --line:#30443D; --line-soft:#26372F;
   --ink:#E6ECE2; --ink-2:#B9C5B8; --ink-3:#97A598; --link:#A9C55A; --link-hover:#C3DB7A;
   --sage-soft:#24372C; --sand-soft:#3A3724; --sand-ink:#E2DCA8;
   --alert-bg:#4A2A1C; --alert-ink:#F2B9A0; --alert-bar:#D9774F; --amber-bar:#D8B84A; --info-bg:#233A36; --info-ink:#CFE3DD;
@@ -44,15 +44,27 @@ html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit}
 a{color:var(--link)}a:hover{color:var(--link-hover)}
-h1,h2{font-family:var(--cond);color:var(--heading);margin:0}
+h1,h2{font-family:var(--cond);color:#fff;margin:0;text-shadow:0 1px 3px rgba(0,0,0,.3)}
 h1{font-weight:600;font-size:34px;letter-spacing:.2px}
 h2{font-weight:600;font-size:21px;letter-spacing:.2px}
+.card h2{color:var(--heading);text-shadow:none}
 .eyebrow{font-family:var(--cond);font-weight:400;text-transform:uppercase;letter-spacing:1.4px;font-size:13px;color:var(--ink-3)}
-.muted{color:var(--ink-2)}
+.muted{color:rgba(255,255,255,.8)}
+.card .muted,.tbl-wrap .muted,.top .muted,.foot .muted{color:var(--ink-2)}
 .small{font-size:13.5px}
 :focus-visible{outline:3px solid var(--nf-green);outline-offset:2px}
 
-.top{background:var(--surface);border-bottom:4px solid var(--nf-green);padding:12px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px}
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(1100px 850px at 0% 0%,rgba(130,165,25,.6),transparent 72%),
+    radial-gradient(1100px 850px at 100% 0%,rgba(205,200,150,.55),transparent 72%),
+    radial-gradient(1200px 900px at 100% 100%,rgba(130,165,25,.5),transparent 72%),
+    radial-gradient(1200px 900px at 0% 100%,rgba(205,200,150,.4),transparent 72%),
+    linear-gradient(160deg,#28452F,#1B3028 70%);
+  filter:saturate(1.2)}
+.top{background:linear-gradient(135deg,rgba(255,255,255,.88),rgba(255,255,255,.7));border-bottom:4px solid var(--nf-green);padding:12px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;
+  -webkit-backdrop-filter:blur(20px) saturate(160%);backdrop-filter:blur(20px) saturate(160%);
+  box-shadow:0 10px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.7)}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .logo .w{font-family:var(--sans);font-weight:700;font-size:19px;line-height:1.02;color:var(--wordmark);letter-spacing:-.2px}
 .divider{width:1px;height:30px;background:var(--line)}
@@ -62,14 +74,17 @@ h2{font-weight:600;font-size:21px;letter-spacing:.2px}
 .back-crm{font-size:13.5px;font-weight:600}
 .notice{background:var(--sand-soft);color:var(--sand-ink);font-size:13.5px;padding:8px 24px}
 
-.hero{background:var(--nf-forest);color:#fff;position:relative;overflow:hidden}
+.hero{background:linear-gradient(145deg,rgba(29,51,47,.8),rgba(14,23,19,.6));color:#fff;position:relative;overflow:hidden;
+  max-width:1180px;margin:22px auto 0;border-radius:22px;border:1px solid rgba(255,255,255,.2);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:0 2px 2px rgba(0,0,0,.2),0 18px 30px -10px rgba(0,0,0,.5),0 36px 60px -16px rgba(0,0,0,.4),inset 0 1.5px 0 rgba(255,255,255,.35)}
 .hero-in{max-width:1180px;margin:0 auto;padding:30px 24px 32px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;position:relative;z-index:1}
 .hero h1{color:#fff}
 .hero p{margin:6px 0 0;color:var(--nf-sage);font-size:15.5px}
 .hero .swoosh{position:absolute;right:0;top:0;height:100%;width:auto;pointer-events:none}
 
 main{max-width:1180px;margin:0 auto;padding:24px 24px 56px;display:flex;flex-direction:column;gap:22px}
-@media (max-width:640px){main,.hero-in{padding-left:16px;padding-right:16px}.top,.notice{padding-left:16px;padding-right:16px}.hero .swoosh{top:auto;bottom:0;height:45%}}
+@media (max-width:640px){main,.hero-in{padding-left:16px;padding-right:16px}.top,.notice{padding-left:16px;padding-right:16px}.hero{margin:12px 12px 0;border-radius:18px}.hero .swoosh{top:auto;bottom:0;height:45%}}
 
 .btn{height:42px;padding:0 16px;border-radius:6px;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center}
 .btn-solid{border:0;background:var(--nf-olive);color:#fff}
@@ -79,19 +94,30 @@ main{max-width:1180px;margin:0 auto;padding:24px 24px 56px;display:flex;flex-dir
 .btn-light{border:0;background:var(--nf-green);color:var(--nf-forest)}
 .btn-light:hover{background:#93B827}
 
-.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:0 1px 1px rgba(0,0,0,.08),0 10px 18px -6px rgba(29,51,47,.25),0 26px 44px -14px rgba(29,51,47,.32),inset 0 1.5px 0 rgba(255,255,255,.7)}
+.card::before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.45),transparent 40%)}
+.card>*{position:relative;z-index:1}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-.kpi{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--nf-green);border-radius:10px;padding:14px 18px}
+.kpi{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--nf-green);border-radius:10px;padding:14px 18px;
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:0 1px 1px rgba(0,0,0,.08),0 8px 14px -4px rgba(29,51,47,.25),0 20px 32px -10px rgba(29,51,47,.3),inset 0 1.5px 0 rgba(255,255,255,.7)}
+.kpi::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 80% at 12% -15%,rgba(255,255,255,.5),transparent 60%)}
+.kpi .l,.kpi .v,.kpi .n{position:relative;z-index:1}
 .kpi .l{font-size:13px;color:var(--ink-2)}
 .kpi .v{font-family:var(--cond);font-weight:700;font-size:30px;color:var(--heading);margin-top:2px;line-height:1.1}
 .kpi .n{font-size:12.5px;color:var(--ink-3);margin-top:2px}
 
 .tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--line);gap:6px;padding-left:2px}
-.tab{border:1px solid var(--line);border-bottom:none;background:var(--surface-2);font-size:14.5px;font-weight:600;color:var(--ink-2);padding:11px 18px;cursor:pointer;border-radius:8px 8px 0 0;min-height:44px;margin-bottom:-1px}
+.tab{border:1px solid var(--line);border-bottom:none;background:var(--surface-2);font-size:14.5px;font-weight:600;color:var(--ink-2);padding:11px 18px;cursor:pointer;border-radius:8px 8px 0 0;min-height:44px;margin-bottom:-1px;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .tab:hover{color:var(--heading);background:var(--sage-soft)}
-.tab.on{color:var(--nf-forest);background:var(--nf-green);border-color:var(--nf-green)}
+.tab.on{color:var(--nf-forest);background:linear-gradient(135deg,rgba(130,165,25,.95),rgba(130,165,25,.8));border-color:var(--nf-green)}
 
-.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  box-shadow:0 1px 1px rgba(0,0,0,.06),0 14px 26px -12px rgba(29,51,47,.35)}
 .tbl{width:100%;border-collapse:collapse;font-size:14.5px}
 .tbl th{text-align:left;font-family:var(--cond);font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-2);font-size:13px;padding:11px 14px;border-bottom:2px solid var(--nf-sage);background:var(--surface-2);white-space:nowrap}
 .tbl td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
@@ -111,7 +137,11 @@ main{max-width:1180px;margin:0 auto;padding:24px 24px 56px;display:flex;flex-dir
 .avail .card{border-left:4px solid var(--nf-olive)}
 .avail .card.lim{border-left-color:var(--nf-sand)}
 textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit;font-size:14.5px;resize:vertical}
-.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--nf-green);border-radius:10px;padding:14px 18px;font-size:14px}
+.in{height:40px;border:1px solid var(--line);border-radius:6px;padding:0 10px;font:inherit;font-size:14.5px;background:var(--surface);color:var(--ink);width:100%}
+select.in{padding-right:4px}
+.req{color:var(--alert-ink)}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--nf-green);border-radius:10px;padding:14px 18px;font-size:14px;
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
 .ok{margin:0;font-size:14.5px;color:var(--heading);font-weight:600;background:var(--sage-soft);border-radius:6px;padding:10px 12px}
 
 /* Demo sign-in and real-data report */
@@ -155,7 +185,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   function badge(s, label) { return '<span class="badge s-' + s + '">' + esc(label || s) + '</span>'; }
 
   // ---------- Mock data (fictitious) ----------
-  var TABS = [['orders', 'Orders & deliveries'], ['quotes', 'Quotes'], ['invoices', 'Invoices'], ['avail', 'Product availability'], ['certs', 'Certificates']];
+  var TABS = [['place', 'Place an order'], ['orders', 'Orders & deliveries'], ['quotes', 'Quotes'], ['invoices', 'Invoices'], ['avail', 'Product availability'], ['certs', 'Certificates'], ['complaints', 'Complaints']];
   var ORDERS = [
     { no: 'SO-48211', product: 'Premium A1 pellets · 1 t bulk bags', qty: '220 t', date: 'Tue 14 Oct', status: 'Scheduled' },
     { no: 'SO-48207', product: 'Premium A1 pellets · 15 kg bags', qty: '240 t', date: 'Thu 16 Oct', status: 'Picking' },
@@ -197,7 +227,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   // Embedded by `build_artifact.py --with-data`, or read from the local, git-ignored data/ folder.
   // The dropdown stands in for a customer signing in with their own credentials.
   var DATA = null;
-  var REAL_TABS = [['orders', 'Recent orders'], ['payments', 'Payment position'], ['invoices', 'Invoices'], ['avail', 'Product availability'], ['certs', 'Certificates']];
+  var REAL_TABS = [['place', 'Place an order'], ['orders', 'Recent orders'], ['payments', 'Payment position'], ['invoices', 'Invoices'], ['avail', 'Product availability'], ['certs', 'Certificates'], ['complaints', 'Complaints']];
   function nz2(n) { return (n < 0 ? '−' : '') + 'NZ$' + Math.abs(n).toLocaleString('en-NZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
   function nz0(n) { return (n < 0 ? '−' : '') + 'NZ$' + Math.round(Math.abs(n)).toLocaleString('en-NZ'); }
   function fmtDate(iso) { return iso ? new Date(iso + 'T00:00:00').toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'; }
@@ -216,6 +246,232 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   }
   function customer() { return DATA && DATA.byId[st.cust]; }
   function pdata() { return DATA && DATA.portal[st.cust]; }
+
+  // ---------- Complaint log ----------
+  // Shares the `complaints` collection (and the `rolly.complaints` localStorage key, and the
+  // `counters/complaints-YYYY` numbering doc) with rolly/index.html, so a complaint submitted here
+  // shows up straight away on the CRM's Complaint log page, and vice versa. See index.html for the
+  // full approval workflow (`complaintApprovals`, `APPROVER`) — the portal only ever reads/writes
+  // `c.status`, never the approvals collection, so a customer never sees internal "sent back" detail.
+  var COMPLAINTS = {}, CPS = null;
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function pLocal(k, d) { try { var v = localStorage.getItem(k); return JSON.parse(v == null ? 'null' : v) || d; } catch (e) { return d; } }
+  function pPut(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return Promise.resolve(); } catch (e) { return Promise.reject(e); } }
+  function initComplaints() {
+    if (CPS) return;
+    COMPLAINTS = pLocal('rolly.complaints', {});
+    CPS = { mode: 'local',
+      saveComplaint: function (id, d) { COMPLAINTS[id] = d; return pPut('rolly.complaints', COMPLAINTS); },
+      nextNumber: function (year) { var c = pLocal('rolly.complaintCounter', {}); c[year] = (c[year] || 0) + 1; return pPut('rolly.complaintCounter', c).then(function () { return c[year]; }); } };
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    window.claude.use('db').then(function (db) {
+      if (!db) return;
+      COMPLAINTS = {};
+      CPS = { mode: 'shared',
+        saveComplaint: function (id, d) { return db.collection('complaints').doc(id).set(d); },
+        nextNumber: function (year) {
+          var ref = db.doc('counters/complaints-' + year), holder = uid();
+          var attempt = function (n) {
+            return ref.acquire({ holder: holder, ttlMs: 5000 }).then(function (lease) {
+              if (!lease.acquired) {
+                if (n > 8) throw { code: 'busy' };
+                return new Promise(function (res) { setTimeout(res, 400 + Math.random() * 400); }).then(function () { return attempt(n + 1); });
+              }
+              return ref.get().then(function (snap) {
+                var next = ((snap.exists && snap.data().n) || 0) + 1;
+                return ref.set({ n: next, year: year }).then(function () { return next; });
+              });
+            });
+          };
+          return attempt(0);
+        } };
+      db.collection('complaints').onSnapshot(function (snap) {
+        var m = {};
+        snap.docs.forEach(function (d) { m[d.id] = d.data(); });
+        COMPLAINTS = m;
+        render();
+      }, function () { /* keep what is on screen */ });
+      render();
+    }).catch(function () { /* stay local */ });
+  }
+  function complaintContext() {
+    var a = customer();
+    if (a) return { key: a.id, company: a.name, owner: a.owner || 'the Nature’s Flame sales team' };
+    return { key: '', company: 'Southern Hearth Merchants', owner: 'Rep B' };
+  }
+  function myComplaints(ctx) {
+    return Object.keys(COMPLAINTS).map(function (id) { return Object.assign({ id: id }, COMPLAINTS[id]); })
+      .filter(function (c) { return (ctx.key && c.acc === ctx.key) || (!c.acc && c.company === ctx.company); })
+      .sort(function (a, b) { return (b.submittedAt || '') < (a.submittedAt || '') ? -1 : 1; });
+  }
+  function complaintNextStep(c) {
+    var owner = c.owner || 'your sales rep';
+    if (c.status === 'Submitted') return owner + ' will review this shortly.';
+    if (c.status === 'Under review') return owner + ' is looking into this.';
+    if (c.status === 'Awaiting GM approval') return 'Pending approval from our General Manager.';
+    if (c.status === 'Accepted') return (c.resolution ? c.resolution + ' — ' : '') + owner + ' will action this.';
+    if (c.status === 'Resolved') return 'This has been resolved.' + (c.resolution ? ' ' + c.resolution : '');
+    if (c.status === 'Declined') return 'This complaint was declined.' + (c.declineReason ? ' ' + c.declineReason : '');
+    return '';
+  }
+  function complaintBadgeFor(status) {
+    var map = { Submitted: ['Open', 'Submitted'], 'Under review': ['Picking', 'Under review'], 'Awaiting GM approval': ['Limited', 'Awaiting approval'], Accepted: ['Accepted', 'Accepted'], Resolved: ['Paid', 'Resolved'], Declined: ['Overdue', 'Declined'] };
+    var m = map[status] || ['Open', status];
+    return badge(m[0], m[1]);
+  }
+  function submitComplaint() {
+    var ctx = complaintContext(), f = st.cf || {};
+    if (!(f.description || '').trim()) return set({ cErr: 'Tell us what happened before submitting.' });
+    if (!(f.contactName || '').trim() && !(f.contactEmail || '').trim() && !(f.contactPhone || '').trim()) return set({ cErr: 'Add your name, email or phone so we can follow up.' });
+    var id = 'c' + uid(), year = new Date().getFullYear();
+    set({ cErr: '', cMsg: 'Submitting…' });
+    CPS.nextNumber(year).then(function (n) {
+      var number = 'CMP-' + year + '-' + String(n).padStart(3, '0');
+      var doc = { number: number, acc: ctx.key, company: ctx.company, owner: ctx.owner,
+        contactName: (f.contactName || '').trim(), contactEmail: (f.contactEmail || '').trim(), contactPhone: (f.contactPhone || '').trim(),
+        category: f.category || 'Product quality', orderRef: (f.orderRef || '').trim(), occurredOn: f.occurredOn || '',
+        description: (f.description || '').trim(), desiredOutcome: (f.desiredOutcome || '').trim(),
+        status: 'Submitted', submittedAt: new Date().toISOString(), submittedBy: (f.contactName || '').trim() || 'Customer',
+        history: [{ at: new Date().toISOString(), what: 'Submitted by the customer via the portal' }] };
+      return CPS.saveComplaint(id, doc);
+    }).then(function () { st.cf = null; set({ cMsg: 'Thanks — this has been sent to ' + ctx.owner + '.' }); window.scrollTo(0, 0); })
+      .catch(function (e) { set({ cMsg: '', cErr: e && e.code === 'busy' ? 'Please try submitting again in a moment.' : 'That did not send. Check your connection and try again.' }); });
+  }
+  function vComplaintsTab() {
+    var ctx = complaintContext();
+    var mine = myComplaints(ctx);
+    var f = st.cf || (st.cf = { category: 'Product quality' });
+    return (st.cMsg ? '<p class="ok">' + esc(st.cMsg) + '</p>' : '') +
+      (st.cErr ? '<p class="small" style="color:var(--alert-ink);margin:0">' + esc(st.cErr) + '</p>' : '') +
+      '<section class="card" style="max-width:760px"><div class="card-head"><h2>Report a complaint</h2><span class="small muted">Goes straight to ' + esc(ctx.owner) + '</span></div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px 14px;margin-top:10px">' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Category</span><select class="in" data-cf="category">' +
+      ['Product quality', 'Delivery', 'Billing or invoice', 'Service', 'Other'].map(function (c) { return '<option value="' + esc(c) + '"' + (f.category === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Order or invoice number (optional)</span><input class="in" data-cf="orderRef" value="' + esc(f.orderRef || '') + '"></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Date it happened</span><input class="in" type="date" data-cf="occurredOn" value="' + esc(f.occurredOn || '') + '"></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Your name <span class="req">*</span></span><input class="in" data-cf="contactName" value="' + esc(f.contactName || '') + '"></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Email</span><input class="in" type="email" data-cf="contactEmail" value="' + esc(f.contactEmail || '') + '"></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Phone</span><input class="in" data-cf="contactPhone" value="' + esc(f.contactPhone || '') + '"></label></div>' +
+      '<label class="small" style="display:block;margin-top:12px;font-weight:600">What happened <span class="req">*</span></label><textarea data-cf="description" rows="3" placeholder="Tell us what went wrong">' + esc(f.description || '') + '</textarea>' +
+      '<label class="small" style="display:block;margin-top:10px;font-weight:600">What would put this right for you (optional)</label><textarea data-cf="desiredOutcome" rows="2">' + esc(f.desiredOutcome || '') + '</textarea>' +
+      '<div style="margin-top:12px"><button class="btn btn-solid" data-act="complaint-submit">Submit complaint</button></div></section>' +
+      '<section style="display:flex;flex-direction:column;gap:10px"><h2>Your complaints</h2>' +
+      (mine.length ? mine.map(function (c) {
+        return '<div class="card" style="border-left:4px solid var(--nf-olive)"><div class="card-head"><div><strong>' + esc(c.number || 'New') + '</strong> · ' + esc(c.category) + '</div>' + complaintBadgeFor(c.status) + '</div>' +
+          '<p class="small" style="margin:8px 0 0">' + esc(c.description) + '</p>' +
+          '<p class="small muted" style="margin:8px 0 0"><strong>What happens next:</strong> ' + esc(complaintNextStep(c)) + '</p>' +
+          '<p class="small muted" style="margin:4px 0 0">Submitted ' + esc(fmtDate((c.submittedAt || '').slice(0, 10))) + '</p></div>';
+      }).join('') : '<div class="card"><p class="muted" style="margin:0">You haven’t submitted any complaints.</p></div>') + '</section>';
+  }
+
+  // ---------- Place an order ----------
+  // Shares the storage pattern (and the same `uid`/`pLocal`/`pPut` helpers) with the complaint log above,
+  // but in its own `orderRequests` collection/localStorage key/counter doc, numbered REQ-YYYY-NNN (kept
+  // distinct from real SAP order numbers like SO-xxxxx, since these are customer-raised requests waiting
+  // on the sales rep to confirm, not yet real sales orders). No GM-approval workflow here — unlike
+  // complaints there's nothing in the brief calling for one, so this stays a simple capture + confirm.
+  var ORDERREQUESTS = {}, ORS = null;
+  function initOrderRequests() {
+    if (ORS) return;
+    ORDERREQUESTS = pLocal('rolly.orderRequests', {});
+    ORS = { mode: 'local',
+      saveOrderRequest: function (id, d) { ORDERREQUESTS[id] = d; return pPut('rolly.orderRequests', ORDERREQUESTS); },
+      nextNumber: function (year) { var c = pLocal('rolly.orderRequestCounter', {}); c[year] = (c[year] || 0) + 1; return pPut('rolly.orderRequestCounter', c).then(function () { return c[year]; }); } };
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    window.claude.use('db').then(function (db) {
+      if (!db) return;
+      ORDERREQUESTS = {};
+      ORS = { mode: 'shared',
+        saveOrderRequest: function (id, d) { return db.collection('orderRequests').doc(id).set(d); },
+        nextNumber: function (year) {
+          var ref = db.doc('counters/orderRequests-' + year), holder = uid();
+          var attempt = function (n) {
+            return ref.acquire({ holder: holder, ttlMs: 5000 }).then(function (lease) {
+              if (!lease.acquired) {
+                if (n > 8) throw { code: 'busy' };
+                return new Promise(function (res) { setTimeout(res, 400 + Math.random() * 400); }).then(function () { return attempt(n + 1); });
+              }
+              return ref.get().then(function (snap) {
+                var next = ((snap.exists && snap.data().n) || 0) + 1;
+                return ref.set({ n: next, year: year }).then(function () { return next; });
+              });
+            });
+          };
+          return attempt(0);
+        } };
+      db.collection('orderRequests').onSnapshot(function (snap) {
+        var m = {};
+        snap.docs.forEach(function (d) { m[d.id] = d.data(); });
+        ORDERREQUESTS = m;
+        render();
+      }, function () { /* keep what is on screen */ });
+      render();
+    }).catch(function () { /* stay local */ });
+  }
+  function orderContext() {
+    var a = customer();
+    if (a) return { key: a.id, company: a.name, owner: a.owner || 'the Nature’s Flame sales team', site: a.name + (a.city ? ' · ' + a.city : '') };
+    return { key: '', company: 'Southern Hearth Merchants', owner: 'Rep B', site: 'Southern Hearth Merchants · Dunedin' };
+  }
+  function myOrderRequests(ctx) {
+    return Object.keys(ORDERREQUESTS).map(function (id) { return Object.assign({ id: id }, ORDERREQUESTS[id]); })
+      .filter(function (o) { return (ctx.key && o.acc === ctx.key) || (!o.acc && o.company === ctx.company); })
+      .sort(function (a, b) { return (b.submittedAt || '') < (a.submittedAt || '') ? -1 : 1; });
+  }
+  function orderProductOptions() {
+    var p = pdata(), seen = {}, out = [];
+    if (p && p.orders) p.orders.forEach(function (o) { o.lines.forEach(function (l) { var k = (l.item || '').toLowerCase(); if (k && !seen[k]) { seen[k] = 1; out.push(l.item); } }); });
+    AVAIL.forEach(function (a) { var k = a.name.toLowerCase(); if (!seen[k]) { seen[k] = 1; out.push(a.name); } });
+    return out;
+  }
+  function submitOrderRequest() {
+    var ctx = orderContext(), f = st.of || {};
+    if (!(f.product || '').trim()) return set({ oErr: 'Choose a product.' });
+    if (!(+f.quantity > 0)) return set({ oErr: 'Enter a quantity greater than zero.' });
+    if (!(f.contactName || '').trim() && !(f.contactEmail || '').trim() && !(f.contactPhone || '').trim()) return set({ oErr: 'Add your name, email or phone so we can confirm the order.' });
+    var id = 'o' + uid(), year = new Date().getFullYear();
+    set({ oErr: '', oMsg: 'Submitting…' });
+    ORS.nextNumber(year).then(function (n) {
+      var number = 'REQ-' + year + '-' + String(n).padStart(3, '0');
+      var deliverTo = f.deliverTo === 'other' ? (f.deliverToOther || '').trim() || ctx.site : ctx.site;
+      var doc = { number: number, acc: ctx.key, company: ctx.company, owner: ctx.owner,
+        contactName: (f.contactName || '').trim(), contactEmail: (f.contactEmail || '').trim(), contactPhone: (f.contactPhone || '').trim(),
+        product: f.product, quantity: f.quantity, requestedDate: f.requestedDate || '', deliverTo: deliverTo, poRef: (f.poRef || '').trim(), notes: (f.notes || '').trim(),
+        status: 'Submitted', submittedAt: new Date().toISOString(), submittedBy: (f.contactName || '').trim() || 'Customer',
+        history: [{ at: new Date().toISOString(), what: 'Submitted by the customer via the portal' }] };
+      return ORS.saveOrderRequest(id, doc);
+    }).then(function () { st.of = null; set({ oMsg: 'Thanks — sent to ' + ctx.owner + ' to confirm.' }); window.scrollTo(0, 0); })
+      .catch(function (e) { set({ oMsg: '', oErr: e && e.code === 'busy' ? 'Please try submitting again in a moment.' : 'That did not send. Check your connection and try again.' }); });
+  }
+  function vPlaceOrderTab() {
+    var ctx = orderContext();
+    var mine = myOrderRequests(ctx);
+    var f = st.of || (st.of = {});
+    var products = orderProductOptions();
+    return (st.oMsg ? '<p class="ok">' + esc(st.oMsg) + '</p>' : '') +
+      (st.oErr ? '<p class="small" style="color:var(--alert-ink);margin:0">' + esc(st.oErr) + '</p>' : '') +
+      '<section class="card" style="max-width:760px"><div class="card-head"><h2>Place an order</h2><span class="small muted">Goes straight to ' + esc(ctx.owner) + '</span></div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px 14px;margin-top:10px">' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Product <span class="req">*</span></span><select class="in" data-of="product">' +
+      '<option value="">Choose a product</option>' + products.map(function (p) { return '<option value="' + esc(p) + '"' + (f.product === p ? ' selected' : '') + '>' + esc(p) + '</option>'; }).join('') + '</select></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Quantity (t) <span class="req">*</span></span><input class="in" type="number" min="1" step="1" data-of="quantity" value="' + esc(f.quantity || '') + '"></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Requested delivery date</span><input class="in" type="date" data-of="requestedDate" value="' + esc(f.requestedDate || '') + '"></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Deliver to</span><select class="in" data-of="deliverTo">' +
+      '<option value="site"' + (f.deliverTo !== 'other' ? ' selected' : '') + '>' + esc(ctx.site) + '</option><option value="other"' + (f.deliverTo === 'other' ? ' selected' : '') + '>Somewhere else</option></select></label>' +
+      (f.deliverTo === 'other' ? '<label style="display:flex;flex-direction:column;gap:4px;grid-column:1/-1"><span class="small" style="font-weight:600">Delivery address</span><input class="in" data-of="deliverToOther" value="' + esc(f.deliverToOther || '') + '"></label>' : '') +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Your PO / reference (optional)</span><input class="in" data-of="poRef" value="' + esc(f.poRef || '') + '"></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Your name</span><input class="in" data-of="contactName" value="' + esc(f.contactName || '') + '"></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Email</span><input class="in" type="email" data-of="contactEmail" value="' + esc(f.contactEmail || '') + '"></label>' +
+      '<label style="display:flex;flex-direction:column;gap:4px"><span class="small" style="font-weight:600">Phone</span><input class="in" data-of="contactPhone" value="' + esc(f.contactPhone || '') + '"></label></div>' +
+      '<label class="small" style="display:block;margin-top:10px;font-weight:600">Notes for your rep (optional)</label><textarea data-of="notes" rows="2">' + esc(f.notes || '') + '</textarea>' +
+      '<div style="margin-top:12px"><button class="btn btn-solid" data-act="order-submit">Submit order</button></div></section>' +
+      '<section style="display:flex;flex-direction:column;gap:10px"><h2>Your recent requests</h2>' +
+      (mine.length ? mine.map(function (o) {
+        return '<div class="card" style="border-left:4px solid var(--nf-olive)"><div class="card-head"><div><strong>' + esc(o.number) + '</strong> · ' + esc(o.product) + ' × ' + esc(o.quantity) + ' t</div>' + badge('Open', o.status) + '</div>' +
+          '<p class="small muted" style="margin:8px 0 0">Requested delivery ' + (o.requestedDate ? esc(fmtDate(o.requestedDate)) : 'as soon as possible') + ' · to ' + esc(o.deliverTo) + (o.poRef ? ' · ref ' + esc(o.poRef) : '') + '</p>' +
+          '<p class="small muted" style="margin:4px 0 0">Submitted ' + esc(fmtDate((o.submittedAt || '').slice(0, 10))) + ' · ' + esc(ctx.owner) + ' to confirm</p></div>';
+      }).join('') : '<div class="card"><p class="muted" style="margin:0">No order requests yet.</p></div>') + '</section>';
+  }
 
   function signInBar() {
     var groups = {};
@@ -279,7 +535,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       '</tbody></table></div>' : '<div class="card"><p class="muted" style="margin:0">No invoices in the last 12 months.</p></div>') +
       '<p class="small muted" style="margin:0">Your 15 most recent invoices from the last 12 months. Credit notes and rebates are applied to the account balance.</p>';
   }
-  var REAL_VIEWS = { orders: vRealOrders, payments: vPayments, invoices: vRealInvoices, avail: vAvail, certs: vCerts };
+  var REAL_VIEWS = { place: vPlaceOrderTab, orders: vRealOrders, payments: vPayments, invoices: vRealInvoices, avail: vAvail, certs: vCerts, complaints: vComplaintsTab };
 
   function renderReal() {
     var a = customer(), p = pdata();
@@ -344,7 +600,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       return '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;' + (i < CERTS.length - 1 ? 'border-bottom:1px solid var(--line-soft)' : '') + '"><div><div style="font-weight:700">' + esc(c[0]) + '</div><div class="small muted">' + esc(c[1]) + '</div></div><button class="dl">Download</button></div>';
     }).join('') + '</div>';
   }
-  var VIEWS = { orders: vOrders, quotes: vQuotes, invoices: vInvoices, avail: vAvail, certs: vCerts };
+  var VIEWS = { place: vPlaceOrderTab, orders: vOrders, quotes: vQuotes, invoices: vInvoices, avail: vAvail, certs: vCerts, complaints: vComplaintsTab };
 
   function render() {
     if (DATA) { renderReal(); return; }
@@ -374,18 +630,31 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   document.addEventListener('click', function (e) {
     var el = e.target.closest('[data-tab],[data-act]');
     if (!el) return;
-    if (el.dataset.tab) set({ tab: el.dataset.tab });
+    if (el.dataset.tab) set({ tab: el.dataset.tab, cMsg: '', cErr: '', oMsg: '', oErr: '' });
     else if (el.dataset.act === 'msg') { set({ msg: !st.msg }); if (st.msg) window.scrollTo(0, 0); }
     else if (el.dataset.act === 'accept') set({ accepted: true });
+    else if (el.dataset.act === 'complaint-submit') submitComplaint();
+    else if (el.dataset.act === 'order-submit') submitOrderRequest();
   });
   document.addEventListener('change', function (e) {
-    if (e.target.id !== 'cust-select') return;
-    try { localStorage.setItem('rolly.portal.customer', e.target.value); } catch (err) { /* no storage */ }
-    set({ cust: e.target.value, msg: false });
-    var sel = document.getElementById('cust-select'); if (sel) sel.focus();
+    if (e.target.id === 'cust-select') {
+      try { localStorage.setItem('rolly.portal.customer', e.target.value); } catch (err) { /* no storage */ }
+      set({ cust: e.target.value, msg: false });
+      var sel = document.getElementById('cust-select'); if (sel) sel.focus();
+      return;
+    }
+    var d = e.target.dataset;
+    if (d && d.of === 'deliverTo') { (st.of = st.of || {})[d.of] = e.target.value; render(); }
+  });
+  document.addEventListener('input', function (e) {
+    var d = e.target.dataset;
+    if (d && d.cf) (st.cf = st.cf || {})[d.cf] = e.target.value;
+    else if (d && d.of) (st.of = st.of || {})[d.of] = e.target.value;
   });
 
   render();
+  initComplaints();
+  initOrderRequests();
   if (window.ROLLY_PORTAL) loadData(window.ROLLY_PORTAL);
   else {
     fetch('../data/snapshot.json', { cache: 'no-store' })
