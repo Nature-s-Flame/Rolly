@@ -293,8 +293,9 @@ textarea{background:var(--surface);color:var(--ink)}
 .ag-table td{padding:3px 6px;border-top:1px solid var(--paper-line)}
 .ag-table .ag-tsec{background:var(--paper-tint);font-weight:700;color:var(--nf-forest)}
 .ag-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:11.5px;margin:8px 0}
-.ag-sigblock{margin:14px 0;font-size:11.5px}
-.ag-sigline{border-top:1px solid var(--paper-ink);max-width:420px;padding-top:3px;font-size:10.5px;color:var(--paper-muted);margin:14px 0 2px}
+.ag-sigblock{margin:28px 0;font-size:11.5px}
+.ag-sigblock .ag-p{margin:0 0 16px}
+.ag-sigline{border-top:1px solid var(--paper-ink);max-width:420px;padding-top:6px;font-size:10.5px;color:var(--paper-muted);margin:28px 0 4px}
 .avatar{overflow:hidden;flex:none}
 .who{font-size:14px;color:var(--nf-sage);white-space:nowrap}
 @media (max-width:640px){.who{display:none}}
@@ -1993,7 +1994,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
           var name = i === 0 ? b.purchaserName : 'NATURE’S FLAME LIMITED';
           return '<div class="ag-sigblock"><p class="ag-p">SIGNED for and on behalf of<br>' + esc(name) + ' by:</p>' +
             '<p class="ag-sigline">______________________________ &nbsp;&nbsp;&nbsp; ______________________</p><p class="ag-p">Title: ________________________</p>' +
-            '<p class="ag-p" style="margin-top:14px">WITNESSED by:</p><p class="ag-sigline">Print name: ___________________ &nbsp;&nbsp;&nbsp; ______________________</p>' +
+            '<p class="ag-p" style="margin-top:28px">WITNESSED by:</p><p class="ag-sigline">Print name: ___________________ &nbsp;&nbsp;&nbsp; ______________________</p>' +
             '<p class="ag-p">Occupation: ____________________&nbsp;&nbsp;&nbsp; Address: ______________________</p></div>';
         }).join('');
       return '';
