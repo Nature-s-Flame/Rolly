@@ -78,7 +78,8 @@ Git: https://github.com/Nature-s-Flame/Rolly (branch `main`) — this repo is PU
   artifact files). Email draft = .eml with `X-Unsent: 1` (opens as a draft in classic Outlook); in the artifact it is
   wrapped in a .zip because the download allowlist excludes .eml. Standard terms are a proposed draft pending review.
   Artifact capabilities now: `{db: {rules: [approvals write admin, settings write admin, complaintApprovals write
-  admin]}, user: {scopes: ["profile"]}, downloads: {}, sample: {}}` — omit `capabilities` on republish to keep them.
+  admin, supplyAgreementApprovals write admin]}, user: {scopes: ["profile"]}, downloads: {}, sample: {}}` — omit
+  `capabilities` on republish to keep them.
 - Quote form rendering (fixed 15 Oct 2026): typing in the Quote form used to call the global `render()` on every
   keystroke (needed so the live preview pane updates as you type), which destroys and recreates every `<input>`,
   including the one being typed into — this silently reversed typed text in `type="email"` fields (no
@@ -140,6 +141,33 @@ Git: https://github.com/Nature-s-Flame/Rolly (branch `main`) — this repo is PU
   `rolly.orderRequests`/`rolly.orderRequestCounter`, numbered `REQ-YYYY-NNN` (deliberately distinct from real SAP
   order numbers like `SO-xxxxx`, since these are unconfirmed requests waiting on the rep). No CRM-side review page
   exists yet for these — only the customer's own "Your recent requests" list on the same tab.
+- Supply Agreements (added 21 Oct 2026, staff-side): drafts the real wood-pellet supply contract (built from
+  Nature's Flame's master template — a Word doc, extracted verbatim into `AGREEMENT_CLAUSES`-equivalent constants
+  inside `composeAgreement()`). Entry point: "+ Create agreement" on the "Contracts & price reviews" page
+  (`agreementsPanel()`), or "Create supply agreement…" on an Active/Signed prospect (`agreementFromLead()`, which
+  replaced the old "Mark agreement signed…" button and its inline form). States: Draft → Awaiting approval →
+  (Returned) → Approved → Signed — every agreement needs `APPROVER` sign-off like Quotes/Complaints (reusing
+  `CAN_APPROVE`), but there's no price-check gate. `composeAgreement(a)` returns one ordered array of blocks
+  (h1/h2/h3/p/list/table/parties/notices/sig/pagebreak/schedule) consumed by BOTH `renderAgreementHtml()` (the live
+  `.paper` preview, same keystroke-safety rule as Quotes — `renderAgreementLive()` never calls full `render()` from
+  a text/number/date input) and `buildAgreementPdf()` (its own jsPDF scaffold, deliberately not sharing code with
+  `buildQuotePdf` — reuses only genuinely generic helpers: `loadPdfFonts`/`PDF_FONTS`, `MARK_PATHS`/`drawPath`,
+  `NF_ADDRESS`, `offerFile`/`downloadError`, `b64utf8`/`wrap76`/`bufToB64`/`zipOne`). No drawn signature like
+  Quotes — this is a wet-ink customer contract, so the PDF's signature page is always blank lines; "Approved" in
+  Rolly means "cleared to send", not "executed". Numbering reuses `nextContractNo()` (the same `SA####` sequence
+  the Key Contracts Register already used for manually-recorded signings) rather than a new per-feature counter —
+  deliberately not the Quotes/Complaints atomic-lease pattern, since this is the same numbering sequence those
+  manual entries already used. Storage: db `supplyAgreements` (open write) + `agreementApprovals` (admin-write
+  only); locally, `rolly.agreements`/`rolly.agreementApprovals`. Once Approved, "Record signing…" on the agreement
+  itself (not the prospect page any more) captures date signed/start/SAP code/link exactly like the old prospect
+  panel did, and — when linked to a prospect — writes the prospect's `l.signed` in the identical shape the old
+  `sign-save` handler used, so the prospect page's existing Key Contracts Register section keeps working
+  unchanged. A direct-to-customer agreement (no linked prospect) gets its own register-row-copy via
+  `agreementRegisterRow(a)` on the agreement page instead. **Gotcha hit and fixed**: `num(x) || 'xx'`-style
+  placeholder fallbacks break for a legitimately-entered `0` (e.g. "Other: 0%" fibre mix showed "xx%"); use an
+  explicit `num()` cast with no `||` fallback for any field where 0 is a valid value, and compute the fibre-mix
+  "Total" from the actual four values rather than hardcoding "100%" (a real total could legitimately not be 100
+  while a draft is still being filled in).
 
 ## Renamed Roland → Rolly (16 Oct 2026)
 

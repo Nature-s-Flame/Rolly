@@ -281,6 +281,20 @@ textarea{background:var(--surface);color:var(--ink)}
 .pp-sig.pending{font-family:var(--sans);font-size:12px;color:var(--paper-muted);font-style:italic;padding:10px 0}
 .pp-sigline{border-top:1px solid var(--paper-ink);max-width:260px;padding-top:3px;font-size:11px;color:var(--paper-muted)}
 .paper-draft{position:absolute;top:96px;right:-38px;transform:rotate(35deg);background:var(--sand-soft);color:var(--sand-ink);font-family:var(--cond);font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:3px 48px;font-size:13px;opacity:.9}
+.ag-paper{padding:22px 26px;max-height:76vh;overflow-y:auto}
+.ag-h1{font-family:var(--cond);font-weight:700;font-size:16px;text-align:center;text-transform:uppercase;color:var(--nf-forest);margin:18px 0 10px}
+.ag-h2{font-family:var(--cond);font-weight:700;font-size:13px;color:var(--nf-forest);margin:16px 0 6px}
+.ag-h3{font-family:var(--sans);font-weight:700;font-size:12px;color:var(--nf-olive);margin:10px 0 4px}
+.ag-p{font-size:11.5px;line-height:1.55;margin:0 0 8px;color:var(--paper-ink)}
+.ag-list{margin:0 0 8px}
+.ag-list .ag-p{margin:0 0 4px;padding-left:14px}
+.ag-table{width:100%;border-collapse:collapse;font-size:10.5px;margin:8px 0 14px}
+.ag-table th{background:var(--nf-olive);color:#fff;text-align:left;padding:4px 6px;font-weight:600}
+.ag-table td{padding:3px 6px;border-top:1px solid var(--paper-line)}
+.ag-table .ag-tsec{background:var(--paper-tint);font-weight:700;color:var(--nf-forest)}
+.ag-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:11.5px;margin:8px 0}
+.ag-sigblock{margin:14px 0;font-size:11.5px}
+.ag-sigline{border-top:1px solid var(--paper-ink);max-width:420px;padding-top:3px;font-size:10.5px;color:var(--paper-muted);margin:14px 0 2px}
 .avatar{overflow:hidden;flex:none}
 .who{font-size:14px;color:var(--nf-sage);white-space:nowrap}
 @media (max-width:640px){.who{display:none}}
@@ -920,7 +934,8 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   }
   function nextContractNo() {
     var max = 0;
-    CONTRACTS.concat(Object.keys(LEADS).map(function (k) { return { no: LEADS[k].signed && LEADS[k].signed.contractNo }; })).forEach(function (c) {
+    CONTRACTS.concat(Object.keys(LEADS).map(function (k) { return { no: LEADS[k].signed && LEADS[k].signed.contractNo }; }))
+      .concat(Object.keys(SUPPLYAGREEMENTS).map(function (k) { return { no: SUPPLYAGREEMENTS[k].number }; })).forEach(function (c) {
       var m = /^SA(\d+)$/i.exec(c.no || ''); if (m) max = Math.max(max, +m[1]);
     });
     return 'SA' + String(max + 1).padStart(4, '0');
@@ -1070,7 +1085,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       return canMove && i <= 4 && i !== stageIdx ? '<button class="' + cls + ' step-btn" data-lstage="' + esc(stg) + '" title="Move to ' + esc(stg) + '">' + esc(stg) + '</button>' : '<div class="' + cls + '">' + esc(stg) + '</div>';
     }).join('') + '</div>';
     html += '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-      (canMove ? '<button class="btn btn-olive" data-lact="sign-open">Mark agreement signed…</button>' : '') +
+      (s.key === 'Active' || s.key === 'Signed' ? '<button class="btn btn-olive" data-lact="agreement-new">Create supply agreement…</button>' : '') +
       (s.key === 'Active' || s.key === 'Signed' ? '<button class="btn btn-quiet" data-lact="lost-open">Mark as lost…</button>' : '') +
       (s.key === 'Cold' || s.key === 'Lost' ? '<button class="btn btn-olive" data-lact="revive">Revive prospect</button>' : '') +
       '<button class="btn btn-quiet" data-lact="edit">Edit details</button>' +
@@ -1079,6 +1094,11 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     if (lq.length) html += '<div class="card"><h2 style="margin-bottom:6px">Quotes</h2>' + lq.map(function (k) {
       return '<div class="row"><button class="lnk" data-quote="' + esc(k) + '">' + esc(quoteNo(QUOTES[k])) + '</button><span class="small">NZ$' + esc(num(QUOTES[k].price).toLocaleString('en-NZ', { minimumFractionDigits: 2 })) + '/t · ' + esc(nt(QUOTES[k].volume)) + ' t/yr</span>' + qBadge(quoteState(k, QUOTES[k])) + '</div>';
     }).join('') + '</div>';
+    var la = Object.keys(SUPPLYAGREEMENTS).filter(function (k) { return SUPPLYAGREEMENTS[k].lead === id; });
+    if (la.length) html += '<div class="card"><h2 style="margin-bottom:6px">Supply agreements</h2>' + la.map(function (k) {
+      var ag = SUPPLYAGREEMENTS[k], ags = agreementState(k, ag);
+      return '<div class="row"><button class="lnk" data-agr="' + esc(k) + '">' + esc(ag.number || 'Draft') + '</button><span class="small">' + esc(ag.contractQty ? nt(ag.contractQty) + ' MT/yr' : '') + '</span>' + aBadge(ags) + '</div>';
+    }).join('') + '</div>';
     if (st.crmError && !panel) html += '<p class="small" style="color:var(--alert-ink);margin:0">' + esc(st.crmError) + '</p>';
     if (panel === 'lost') {
       var lf = st.lf || (st.lf = {});
@@ -1086,17 +1106,6 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
         field('lf-reason', 'Reason', sel('lf-reason', 'lf:reason', lf, LOST_REASONS, 'Choose…')) + field('lf-note', 'Note (optional)', inp('lf-note', 'lf:note', lf)) + '</div>' +
         '<p class="tiny">Anyone can mark a prospect lost. The owner sees who did it, and it can be revived later.</p>' +
         '<div style="display:flex;gap:8px"><button class="btn btn-olive" data-lact="lost-save">Mark as lost</button><button class="btn btn-quiet" data-lact="close">Cancel</button></div></section>';
-    }
-    if (panel === 'sign') {
-      var sf = st.sf || (st.sf = { at: iso(TODAY), contractNo: nextContractNo(), start: a.start || '' });
-      html += '<section class="card review-box"><h2 style="margin-bottom:4px">Agreement signed</h2><p class="small muted" style="margin:0 0 10px">Records the signing and prepares the Key Contracts Register entry. The prospect becomes a Customer automatically once SAP invoices the customer number below.</p><div class="form-grid">' +
-        field('sf-at', 'Date signed', inp('sf-at', 'sf:at', sf, ' type="date"')) +
-        field('sf-no', 'Contract number', inp('sf-no', 'sf:contractNo', sf), false, 'Next free sales number suggested') +
-        field('sf-start', 'Supply start date', inp('sf-start', 'sf:start', sf, ' type="date"')) +
-        field('sf-sap', 'SAP customer number', inp('sf-sap', 'sf:sapCode', sf, ' list="sap-codes" placeholder="Add once finance has set them up"'), false, 'Optional now; needed to detect the first sale') +
-        field('sf-link', 'Signed contract link (SharePoint)', inp('sf-link', 'sf:link', sf, ' type="url" placeholder="https://naturesflame451.sharepoint.com/…"')) + '</div>' +
-        '<datalist id="sap-codes">' + ACC.filter(function (x) { return x.real; }).map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.name) + '</option>'; }).join('') + '</datalist>' +
-        '<div style="display:flex;gap:8px;margin-top:6px"><button class="btn btn-olive" data-lact="sign-save">Record signing</button><button class="btn btn-quiet" data-lact="close">Cancel</button></div></section>';
     }
     if (l.signed) {
       var reg = inRegister(l), row = registerRow(l);
@@ -1195,7 +1204,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     }
     if (!l) return;
     if (act === 'lost-open') return set({ lPanel: 'lost', lf: {} });
-    if (act === 'sign-open') return set({ lPanel: 'sign', sf: null });
+    if (act === 'agreement-new') { st.saf = agreementFromLead(id); st.aEditId = null; st.safErrors = []; return set({ view: 'agreementEdit', crmError: '' }); }
     if (act === 'lost-save') {
       var lf = st.lf || {};
       if (!lf.reason) return set({ crmError: 'Choose a reason.' });
@@ -1203,12 +1212,6 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       return updateLead(id, { lost: { at: new Date().toISOString(), by: ME || null, byLabel: ME ? '' : (VIEWER.name || 'this computer'), reason: lf.reason, note: (lf.note || '').trim() } }, 'Marked lost: ' + lf.reason);
     }
     if (act === 'revive') return updateLead(id, { lost: null, coldReset: iso(TODAY), stage: 'Enquiry', stageAt: new Date().toISOString() }, 'Revived (12-month clock restarted)');
-    if (act === 'sign-save') {
-      var sf = st.sf || {};
-      st.lPanel = null;
-      return updateLead(id, { signed: { at: sf.at || iso(TODAY), contractNo: (sf.contractNo || '').trim(), start: sf.start || '', link: (sf.link || '').trim(), by: ME || null },
-        sapCode: (sf.sapCode || '').trim() || l.sapCode || '', stage: 'Signed', stageAt: new Date().toISOString() }, 'Agreement signed' + (sf.contractNo ? ' (' + sf.contractNo.trim() + ')' : ''));
-    }
     if (act === 'link-sap') {
       var code = ((st.sf || {}).sapCode || '').trim();
       if (!code) return set({ crmError: 'Enter the SAP customer number.' });
@@ -1501,6 +1504,628 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   }
   // Every quote is approved by the General Manager. The price comparison is shown to help the review.
   var APPROVER = { name: 'John Goodwin', title: 'General Manager' };
+
+  // ---------- Supply Agreements ----------
+  // A Supply Agreement is the real wood-pellet supply contract (the document customers sign), built from
+  // Nature's Flame's master template. Draft -> GM approval (every agreement needs sign-off, like Quotes
+  // and the Complaint log; there's no price-check gate here, every one goes to John) -> Approved (numbered
+  // SA####, the SAME sequence nextContractNo() already mints Key Contracts Register numbers from, not a
+  // separate one) -> Signed, once staff record the customer's wet-ink signature. The clause text below is
+  // a fixed constant (not independently editable like QTERMS) because it's the real signed-off template,
+  // not a draft pending review -- only the ~20 deal-specific blanks are filled in. Storage: artifact db
+  // `supplyAgreements`, `agreementApprovals` (writable by Editors only); locally, this browser. This
+  // replaces the old prospect-page "Mark agreement signed..." step -- see agreementFromLead() and the
+  // "Record signing" action below -- recording a signing now happens on the agreement itself, post-approval.
+  var SUPPLYAGREEMENTS = {}, AGREEMENTAPPROVALS = {}, AG = null;
+  function initAgreements() {
+    if (AG) return;
+    SUPPLYAGREEMENTS = qLocal('rolly.agreements', {}); AGREEMENTAPPROVALS = qLocal('rolly.agreementApprovals', {});
+    AG = { mode: 'local',
+      saveAgreement: function (id, d) { SUPPLYAGREEMENTS[id] = d; return qPut('rolly.agreements', SUPPLYAGREEMENTS); },
+      deleteAgreement: function (id) { delete SUPPLYAGREEMENTS[id]; return qPut('rolly.agreements', SUPPLYAGREEMENTS); },
+      saveApproval: function (id, d) { AGREEMENTAPPROVALS[id] = d; return qPut('rolly.agreementApprovals', AGREEMENTAPPROVALS); } };
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    window.claude.use('db').then(function (db) {
+      if (!db) return;
+      SUPPLYAGREEMENTS = {}; AGREEMENTAPPROVALS = {};
+      AG = { mode: 'shared',
+        saveAgreement: function (id, d) { return db.collection('supplyAgreements').doc(id).set(d); },
+        deleteAgreement: function (id) { return db.collection('supplyAgreements').doc(id).delete(); },
+        saveApproval: function (id, d) { return db.collection('agreementApprovals').doc(id).set(d); } };
+      ['supplyAgreements', 'agreementApprovals'].forEach(function (name) {
+        db.collection(name).onSnapshot(function (snap) {
+          var m = {};
+          snap.docs.forEach(function (d) { m[d.id] = d.data(); });
+          if (name === 'supplyAgreements') SUPPLYAGREEMENTS = m; else AGREEMENTAPPROVALS = m;
+          resolvePeople(); render();
+        }, function () { /* keep what is on screen */ });
+      });
+      render();
+    }).catch(function () { /* stay local */ });
+  }
+  function agreementApprovalOf(id, a) {
+    var ap = AGREEMENTAPPROVALS[id];
+    if (!ap || !a.submittedAt || ap.at < a.submittedAt) return null;
+    return ap;
+  }
+  function agreementState(id, a) {
+    if (a.status === 'Signed') return { key: 'Signed', label: 'Signed' };
+    if (a.status === 'Approved') return { key: 'Approved', label: 'Approved' };
+    var ap = agreementApprovalOf(id, a);
+    if (a.status === 'Awaiting approval' && ap && ap.decision === 'returned') return { key: 'Returned', label: 'Sent back', ap: ap };
+    if (a.status === 'Awaiting approval') return { key: 'Awaiting approval', label: 'Awaiting approval' };
+    return { key: 'Draft', label: 'Draft' };
+  }
+  function aBadge(s) {
+    var cls = { Draft: 'b-later', 'Awaiting approval': 'b-soon', Returned: 'b-stall', Approved: 'st-Customer', Signed: 'st-Customer' }[s.key] || 'b-later';
+    return '<span class="badge ' + cls + '">' + esc(s.label) + '</span>';
+  }
+  function blankAgreement() { return { termYears: '5', country: 'New Zealand' }; }
+  function agreementCompanyHint(f) {
+    var txt = (f.company || '').trim();
+    if (!txt) return 'Type an existing customer or prospect name — this fills in the contact details below.';
+    var m = companyMatch(txt);
+    if (m) return (m.kind === 'acc' ? 'Existing customer, from SAP sales data.' : 'Open prospect in Rolly.') + ' Contact details below were filled in from the record — change them if you’re dealing with someone else there.';
+    return 'No existing customer or open prospect matches “' + esc(txt) + '”. <button type="button" class="lnk" data-qnew-prospect="' + esc(txt) + '">Add it as a new prospect</button> first, or type the legal name below directly.';
+  }
+  function applyCompanyToAgreement(f, m) {
+    f.company = m.name;
+    if (m.kind === 'acc') {
+      var a = ACC.filter(function (x) { return x.id === m.id; })[0], r = (a && a.real) || {};
+      f.acc = m.id; delete f.lead;
+      f.contactName = r.contact || ''; f.email = ''; f.phone = r.phone || ''; if (!f.purchaserSite) f.purchaserSite = r.city || '';
+    } else {
+      var l = LEADS[m.id] || {};
+      f.lead = m.id; delete f.acc;
+      f.contactName = l.contactName || ''; f.email = l.email || ''; f.phone = l.mobile || '';
+      if (!f.purchaserSite) f.purchaserSite = [l.address, l.city].filter(Boolean).join(', ');
+    }
+    if (!f.legalName) f.legalName = (f.company || '').trim();
+    if (!f.attentionName) f.attentionName = f.contactName || '';
+    if (!f.noticeEmail) f.noticeEmail = f.email || '';
+    if (!f.deliveryPoint) f.deliveryPoint = f.purchaserSite || '';
+  }
+  function agreementFromLead(id) {
+    var l = LEADS[id], a = (l.agreements || [])[0] || {};
+    var f = blankAgreement();
+    applyCompanyToAgreement(f, { kind: 'lead', id: id, name: l.company });
+    f.contractQty = a.volume ? String(a.volume) : ''; f.yearlyMinVolume = f.contractQty;
+    f.termYears = a.term ? String(a.term) : f.termYears;
+    f.commencementDate = a.start || '';
+    return f;
+  }
+  function agreementFormFromDoc(a) {
+    var mix = a.fibreMix || {};
+    return { company: a.company, acc: a.acc, lead: a.lead, legalName: a.legalName, country: a.country, companyNo: a.companyNo,
+      businessDescription: a.businessDescription, purchaserSite: a.purchaserSite, deliveryPoint: a.deliveryPoint,
+      contactName: a.contactName, attentionName: a.attentionName, email: a.email, noticeEmail: a.noticeEmail, phone: a.phone,
+      commencementDate: a.commencementDate, termYears: String(a.termYears || 5),
+      contractQty: a.contractQty ? String(a.contractQty) : '', dailyMax: a.dailyMax ? String(a.dailyMax) : '', monthlyMax: a.monthlyMax ? String(a.monthlyMax) : '',
+      yearlyMinVolume: a.yearlyMinVolume ? String(a.yearlyMinVolume) : '',
+      fibrePrice: a.fibrePrice ? String(a.fibrePrice) : '', conversionCost: a.conversionCost ? String(a.conversionCost) : '',
+      fibreSawdust: mix.sawdust ? String(mix.sawdust) : '', fibreShavings: mix.shavings ? String(mix.shavings) : '',
+      fibreChip: mix.chip ? String(mix.chip) : '', fibreLogs: mix.logs ? String(mix.logs) : '', fibreOther: mix.other ? String(mix.other) : '' };
+  }
+  function agreementDocFromForm(f) {
+    return { company: (f.company || '').trim(), acc: f.acc || '', lead: f.lead || '',
+      legalName: (f.legalName || '').trim(), country: (f.country || 'New Zealand').trim(), companyNo: (f.companyNo || '').trim(),
+      businessDescription: (f.businessDescription || '').trim(), purchaserSite: (f.purchaserSite || '').trim(), deliveryPoint: (f.deliveryPoint || '').trim(),
+      contactName: (f.contactName || '').trim(), attentionName: (f.attentionName || '').trim(), email: (f.email || '').trim(), noticeEmail: (f.noticeEmail || '').trim(), phone: (f.phone || '').trim(),
+      commencementDate: f.commencementDate || '', termYears: num(f.termYears) || 5,
+      contractQty: num(f.contractQty), dailyMax: num(f.dailyMax) || null, monthlyMax: num(f.monthlyMax) || null,
+      yearlyMinVolume: num(f.yearlyMinVolume) || num(f.contractQty),
+      fibrePrice: num(f.fibrePrice), conversionCost: num(f.conversionCost),
+      fibreMix: { sawdust: num(f.fibreSawdust), shavings: num(f.fibreShavings), chip: num(f.fibreChip), logs: num(f.fibreLogs), other: num(f.fibreOther) } };
+  }
+  function fibreMixTotal(f) { return num(f.fibreSawdust) + num(f.fibreShavings) + num(f.fibreChip) + num(f.fibreLogs) + num(f.fibreOther); }
+  function basePriceLine(f) { return 'Base Price: <strong>' + (num(f.fibrePrice) || num(f.conversionCost) ? '$' + (num(f.fibrePrice) + num(f.conversionCost)).toFixed(2) : '—') + ' / MT</strong>'; }
+  function saveAgreementDraft() {
+    var f = st.saf || {};
+    var errs = [];
+    if (!(f.company || '').trim()) errs.push('a company name');
+    else if (!companyMatch((f.company || '').trim())) errs.push('pick an existing customer or prospect, or add it as a new prospect first');
+    if (!(f.legalName || '').trim()) errs.push('the purchaser’s legal entity name');
+    if (!(num(f.contractQty) > 0)) errs.push('a Contract Quantity');
+    if (!(num(f.fibrePrice) > 0)) errs.push('a Fibre Price');
+    if (errs.length) { set({ safErrors: errs }); window.scrollTo(0, 0); return; }
+    var doc = agreementDocFromForm(f);
+    st.crmSaving = true;
+    if (st.aEditId && SUPPLYAGREEMENTS[st.aEditId]) {
+      var id = st.aEditId, old = SUPPLYAGREEMENTS[id];
+      doc = Object.assign({}, old, doc, { history: (old.history || []).concat([stamp('Draft updated')]) });
+      AG.saveAgreement(id, doc).then(function () { set({ crmSaving: false, view: 'agreement', agreementId: id, saf: null, aEditId: null, safErrors: [] }); window.scrollTo(0, 0); },
+        function () { set({ crmSaving: false, crmError: 'That did not save. Check your connection and try again.' }); });
+      return;
+    }
+    var nid = 'sa' + uid(), created = new Date().toISOString();
+    doc = Object.assign(doc, { status: 'Draft', createdAt: created, owner: ME || null, ownerLabel: ME ? '' : (VIEWER.name || 'this computer'), history: [stamp('Draft created')] });
+    AG.saveAgreement(nid, doc).then(function () { set({ crmSaving: false, view: 'agreement', agreementId: nid, saf: null, safErrors: [] }); window.scrollTo(0, 0); },
+      function () { set({ crmSaving: false, crmError: 'That did not save. Check your connection and try again.' }); });
+  }
+  function approveAgreement(id, comment) {
+    var a = SUPPLYAGREEMENTS[id], at = new Date().toISOString();
+    var approval = { decision: 'approved', at: at, by: ME || null, byLabel: ME ? '' : (VIEWER.name || 'this computer'), comment: comment };
+    set({ aMsg: 'Approving…', crmError: '' });
+    AG.saveApproval(id, approval).then(function () {
+      var number = a.number || nextContractNo();
+      var doc = Object.assign({}, a, { status: 'Approved', number: number, approvedAt: at,
+        approval: { at: at, by: approval.by, byLabel: approval.byLabel, comment: comment, signer: APPROVER.name, signerTitle: APPROVER.title },
+        history: (a.history || []).concat([stamp('Approved by ' + APPROVER.name + '; numbered ' + number + (comment ? ' · “' + comment + '”' : ''))]) });
+      return AG.saveAgreement(id, doc).then(function () { set({ aMsg: 'Approved as ' + number + '. Ready to download and send.' }); });
+    }).catch(function (e) {
+      set({ aMsg: '', crmError: e && e.code === 'invalid_argument' ? 'Only ' + APPROVER.name + ' (Editor access) can approve agreements.' : 'The approval did not save. Check your connection and try again.' });
+    });
+  }
+  function agreementAction(act, el) {
+    var id = st.agreementId, a = SUPPLYAGREEMENTS[id];
+    if (act === 'new') { st.saf = blankAgreement(); st.aEditId = null; st.safErrors = []; return set({ view: 'agreementEdit', crmError: '' }); }
+    if (act === 'save-draft') return saveAgreementDraft();
+    if (!a) return;
+    var save = function (patch, what, msg) {
+      var doc = Object.assign({}, a, patch, { history: (a.history || []).concat(what ? [stamp(what)] : []) });
+      st.crmSaving = true;
+      return AG.saveAgreement(id, doc).then(function () { set({ crmSaving: false, aPanel: null, aMsg: msg || '', crmError: '' }); },
+        function () { set({ crmSaving: false, crmError: 'That did not save. Check your connection and try again.' }); });
+    };
+    if (act === 'close') return set({ aPanel: null, crmError: '' });
+    if (act === 'edit') { st.saf = agreementFormFromDoc(a); st.aEditId = id; st.safErrors = []; return set({ view: 'agreementEdit', crmError: '' }); }
+    if (act === 'delete') return AG.deleteAgreement(id).then(function () { set({ view: a.lead ? 'prospect' : 'contracts', leadId: a.lead || st.leadId }); });
+    if (act === 'submit-open') return set({ aPanel: 'submit', asf: {} });
+    if (act === 'submit') return save({ status: 'Awaiting approval', submittedAt: new Date().toISOString(), approvalReason: ((st.asf || {}).reason || '').trim() },
+      'Submitted to ' + APPROVER.name + ' for approval', 'Sent to ' + APPROVER.name + ' for approval.');
+    if (act === 'approve') return approveAgreement(id, ((st.apf2 || {}).comment || '').trim());
+    if (act === 'return') {
+      var comment = ((st.apf2 || {}).comment || '').trim();
+      if (!comment) return set({ crmError: 'Add a comment so the preparer knows what to change.' });
+      var a2 = { decision: 'returned', at: new Date().toISOString(), by: ME || null, byLabel: ME ? '' : (VIEWER.name || 'this computer'), comment: comment };
+      return AG.saveApproval(id, a2).then(function () { st.apf2 = {}; save({}, 'Sent back: ' + comment, 'Sent back to the preparer.'); },
+        function () { set({ crmError: 'Only ' + APPROVER.name + ' (Editor access) can approve or send back agreements.' }); });
+    }
+    if (act === 'pdf') {
+      set({ aMsg: 'Preparing the PDF…', crmError: '' });
+      return buildAgreementPdf(a).then(function (buf) { return offerFile(pdfNameAgreement(a), buf, 'application/pdf'); })
+        .then(function () { set({ aMsg: 'PDF downloaded.' }); }, function (e) { set({ aMsg: '', crmError: downloadError(e) }); });
+    }
+    if (act === 'eml') {
+      if (!a.noticeEmail && !a.email) return set({ crmError: 'Add the customer’s notices email to the agreement first (Edit).' });
+      set({ aMsg: 'Preparing the email draft…', crmError: '' });
+      var base = pdfNameAgreement(a).replace(/\.pdf$/, '');
+      return buildAgreementPdf(a).then(function (buf) {
+        var eml = buildAgreementEml(a, buf);
+        var inArtifact = window.claude && typeof window.claude.use === 'function';
+        return inArtifact ? offerFile(base + ' email.zip', zipOne(base + '.eml', eml), 'application/zip') : offerFile(base + '.eml', eml, 'message/rfc822');
+      }).then(function () { set({ aMsg: 'Email draft ready — check Downloads.' }); }, function (e) { set({ aMsg: '', crmError: downloadError(e) }); });
+    }
+    if (act === 'sign-open') return set({ aPanel: 'sign', agf: { at: iso(TODAY), start: a.commencementDate || '' } });
+    if (act === 'sign-save') {
+      var sf2 = st.agf || {};
+      var signed = { at: sf2.at || iso(TODAY), start: sf2.start || '', sapCode: (sf2.sapCode || '').trim(), link: (sf2.link || '').trim(), by: ME || null, byLabel: ME ? '' : (VIEWER.name || 'this computer') };
+      return save({ status: 'Signed', signed: signed }, 'Signed (recorded)', 'Recorded as signed.').then(function () {
+        if (a.lead && LEADS[a.lead]) updateLead(a.lead, { signed: { at: signed.at, contractNo: a.number, start: signed.start, link: signed.link, by: signed.by },
+          sapCode: signed.sapCode || LEADS[a.lead].sapCode || '', stage: 'Signed', stageAt: new Date().toISOString() }, 'Agreement ' + a.number + ' signed');
+      });
+    }
+  }
+  function agreementRegisterRow(a) {
+    var start = (a.signed && a.signed.start) || a.commencementDate || '';
+    var d = function (x) { return x ? x.split('-').reverse().join('/') : ''; };
+    return [a.number || '', 'Active', 'Sales - Pellets', a.company, 'Wood Pellets', d(start), d(addYears(start, a.termYears)), a.termYears || '',
+      'Tonnage', a.fibrePrice && a.conversionCost ? (num(a.fibrePrice) + num(a.conversionCost)).toFixed(2) : '', '$/MT', '', '', 'Wood Pellets', a.contractQty || '', 'MT',
+      (a.signed && a.signed.link) || '', ''];
+  }
+
+  // Clause text is the real master template, verbatim, with the deal-specific blanks substituted at
+  // compose time. composeAgreement() returns one flat ordered array of blocks consumed by BOTH the HTML
+  // live-preview (renderAgreementHtml) and the PDF (buildAgreementPdf), so the two can never drift apart.
+  function composeAgreement(a) {
+    var v = {
+      name: (a.legalName || a.company || 'XXXXXXXXXXXXXXXXX LIMITED').toUpperCase(),
+      country: a.country || '[country]', companyNo: a.companyNo || '[ ]',
+      biz: a.businessDescription || '[describe the Purchaser’s business]', site: a.purchaserSite || '[Purchaser’s site address]',
+      delivery: a.deliveryPoint || a.purchaserSite || '[Delivery Point]',
+      commence: a.commencementDate ? longDate(a.commencementDate) : '[ ]', term: a.termYears || 5,
+      qty: a.contractQty ? nt(a.contractQty) : '[ ]', daily: a.dailyMax ? nt(a.dailyMax) : '[ ]', monthly: a.monthlyMax ? nt(a.monthlyMax) : '[ ]',
+      minVol: a.yearlyMinVolume ? nt(a.yearlyMinVolume) : (a.contractQty ? nt(a.contractQty) : '[ ]'),
+      sawdust: num(a.fibreMix && a.fibreMix.sawdust), shavings: num(a.fibreMix && a.fibreMix.shavings),
+      chip: num(a.fibreMix && a.fibreMix.chip), logs: num(a.fibreMix && a.fibreMix.logs), other: num(a.fibreMix && a.fibreMix.other),
+      fibrePrice: a.fibrePrice ? num(a.fibrePrice).toFixed(2) : 'xx.xx', conv: a.conversionCost ? num(a.conversionCost).toFixed(2) : 'xx.xx',
+      base: (a.fibrePrice && a.conversionCost) ? (num(a.fibrePrice) + num(a.conversionCost)).toFixed(2) : '[ ]',
+      attn: a.attentionName || a.contactName || '[ ]', email: a.noticeEmail || a.email || '[ ]'
+    };
+    var b = [];
+    var h1 = function (t) { b.push({ k: 'h1', t: t }); };
+    var h2 = function (n, t) { b.push({ k: 'h2', n: n, t: t }); };
+    var h3 = function (n, t) { b.push({ k: 'h3', n: n, t: t }); };
+    var p = function (t) { b.push({ k: 'p', t: t }); };
+    var list = function (items) { b.push({ k: 'list', items: items }); };
+    var brk = function () { b.push({ k: 'pagebreak' }); };
+
+    h1('AGREEMENT FOR THE SUPPLY OF WOOD PELLETS');
+    b.push({ k: 'parties', seller: 'NATURE’S FLAME LIMITED, a company incorporated in New Zealand with company no. 951956 (Seller)',
+      purchaser: v.name + ', a company incorporated in ' + v.country + ' with company no. ' + v.companyNo + ' (Purchaser)' });
+
+    h2('1', 'BACKGROUND');
+    p('The Seller is a supplier of wood pellets to industry and has a wood pellet manufacturing facility located in Taupo, New Zealand. The Purchaser is ' + v.biz + ' located in ' + v.site + '.');
+    p('The Purchaser wishes to purchase wood pellets from the Seller.');
+    p('This Agreement sets out the terms on which the Seller agrees to sell, and the Purchaser agrees to purchase, wood pellets.');
+
+    h2('2', 'DEFINITIONS AND INTERPRETATION');
+    h3('2.1', 'Definitions');
+    p('In this Agreement unless the context otherwise requires:');
+    [
+      ['"Agreement"', 'means this Agreement together with all schedules and appendices hereto.'],
+      ['"Change of Control"', 'in respect of a party, means any person(s) (alone or together with another person(s)) who controls that party ceasing to control that party or any person (alone or together with another person(s)) acquiring control of that party, using the above definition.'],
+      ['"Commencement Date"', 'means the commencement date specified in Schedule 2.'],
+      ['"Competing Product"', 'means wood pellets and any other solid biomass fuel capable of use in combustion systems for the purpose of generating heat or electricity, including (but not limited to) wood briquettes, wood chips, torrefied biomass, straw pellets, and other densified biomass products.'],
+      ['"Contract Quantity"', 'means the amount of Wood Pellets to be supplied under this Agreement as set out in Schedule 1.'],
+      ['"Contract Year"', 'means a period of 365 consecutive days commencing on the Commencement Date.'],
+      ['"Default Interest Rate"', 'means the Reserve Bank of New Zealand Official Cash Rate plus 5% per annum.'],
+      ['"Delivery Point"', 'means ' + v.delivery + ' or, if the parties have agreed in writing that the Purchaser is responsible for arranging for collection of Wood Pellets, the Seller’s Site.'],
+      ['"Environmental Costs"', 'means all taxes, levies, duties, charges, surcharges or other costs (including without limitation the cost of acquiring emissions units or similar instruments) imposed on, incurred by, or payable by the Seller in connection with the manufacture, supply, sale or delivery of the Wood Pellets sold under this Agreement under or in connection with any emissions trading scheme, carbon pricing mechanism, carbon reduction scheme, climate change levy, or similar scheme, whether existing at the date of this Agreement or introduced or amended at any time in the future.'],
+      ['"Force Majeure Event"', 'means any circumstances beyond the Seller’s reasonable control including but not limited to, fire, storm, flood, earthquake, landslide, explosion, act of the public enemy, war, rebellion, insurrection, riot, civil commotion, sabotage, labour disputes, epidemic, pandemic, quarantine restrictions, transportation embargoes, acts of God, acts of government or any agency thereof or judicial action or mechanical breakdown preventing or delaying supply.'],
+      ['"GJ"', 'means gigajoules.'],
+      ['"GST"', 'means goods and services tax payable pursuant to the Goods and Services Tax Act 1985 and includes any tax levied in substitution for such tax.'],
+      ['"Losses"', 'means any and all costs, damages, charges, injuries, losses, expenses (including legal costs on a solicitor and client basis, other advisor expenses on an as-invoiced basis and any Court or arbitral tribunal costs or fees), claims or penalties, including loss of profits.'],
+      ['"MT"', 'means metric tonnes.'],
+      ['"Price"', 'means the purchase price in New Zealand Dollars payable by the Purchaser to Seller per MT of Wood Pellets, as set out in Schedule 2.'],
+      ['"Purchaser’s Site"', 'means the Purchaser’s site as described in Schedule 2.'],
+      ['"Seller’s Site"', 'is located at 27 Aratiatia Road, Centennial Industrial Park, Taupo.'],
+      ['"Specification"', 'means the specification for the Wood Pellets set out in Schedule 1.'],
+      ['"Term"', 'means the Term of this Agreement as set out in Schedule 1, as the same may be extended by mutual agreement.'],
+      ['"Wood Pellets"', 'means pellets made from renewable wood fibre residues to the Specifications set out in Schedule 1.'],
+      ['"Working Day"', 'means 8.00 am to 5.00pm Monday to Friday except for New Zealand national public holidays and any applicable regional holidays.'],
+      ['"Yearly Minimum Volume"', 'means the minimum volume of Wood Pellets to be purchased by the Purchaser in each Contract Year, as specified in Schedule 2.']
+    ].forEach(function (d) { p(d[0] + ' ' + d[1]); });
+    h3('2.2', 'Interpretation');
+    p('In this Agreement:');
+    list(['(a) Singular includes the plural and vice versa and words importing one gender include the other genders.',
+      '(b) The term "including" shall not be deemed to limit the scope of any provision or clause. It is intended to be illustrative and not exhaustive.',
+      '(c) Persons include corporations, associations, authorities and bodies corporate and unincorporated.',
+      '(d) Clause headings are for reference only and shall not be used to interpret any part of this Agreement.',
+      '(e) Reference to a Schedule means the schedule attached to, and forming part of, this Agreement; and',
+      '(f) Reference to a party to this Agreement includes that party’s permitted successors, and assigns, and agents, employees and contractors.']);
+
+    h2('3', 'SUPPLY OF WOOD PELLETS');
+    h3('3.1', 'Seller to Supply and Purchaser to Purchase');
+    p('During the Term the Seller will supply Wood Pellets to the Purchaser in the quantities noted in Schedule 1 (subject to the rest of this clause 3). The Purchaser will exclusively purchase all its requirements for Competing Products from the Seller, on the terms and subject to the conditions set out in this Agreement.');
+    h3('3.2', 'Forecast Delivery Schedules');
+    p('On the first day of the month that is 3 months before the Commencement Date, the Purchaser shall give notice in writing to the Seller specifying the quantities and timing of wood pellets to be delivered to the Delivery Point by the Seller during the 3-month period starting on the Commencement Date (Forecast Delivery Schedule). This process shall be repeated on the first day of every subsequent month, so that the notices given by the Purchaser to the Seller under this clause become rolling three-month notifications of the quantities and timing of Wood Pellets which the Purchaser will purchase. The Purchaser shall use all reasonable endeavours to ensure that all Forecast Delivery Schedules are accurate and shall determine such content in good faith, but such schedules are not binding on either party.');
+    p('In addition, no later than 31 August in each calendar year during the Term, the Purchaser shall provide to the Seller in writing its good faith forecast of its anticipated total consumption (in MT) of Wood Pellets for the following 12-month period starting 1 October of the same year. The Seller will rely on these forecasts for production and supply planning purposes, but this forecast does not constitute a binding commitment unless otherwise expressly agreed in writing by the parties.');
+    h3('3.3', 'Day to Day Communications for Delivery');
+    p('On each Tuesday during the Term the Purchaser shall confirm to the Seller by email (each a Weekly Demand Confirmation): (a) the daily volume of Wood Pellets requested to be delivered by the Seller during the period starting on the Friday immediately following the date of that email and ending on the following Friday; and (b) the requested timing for each daily delivery during that period. The Purchaser shall take delivery of (and pay for) all Wood Pellets supplied as per each Weekly Demand Confirmation.');
+    p('The Purchaser and the Seller shall establish day to day communications to manage the delivery of Wood Pellets to meet daily usage variation. The Purchaser shall give the Seller as much notice as possible of any requested changes to the expected wood pellet use throughout each day and for the following day(s) as applicable. The Seller may accept or reject any such request in its absolute discretion.');
+    h3('3.4', 'Time and Amounts for Delivery');
+    p('The Purchaser shall be available to take delivery of the Wood Pellets at the Delivery Point during working hours on every day during the Term in the quantities and at the rates and times specified in each Weekly Demand Confirmation.');
+    h3('3.5', 'Transport of Wood Pellets');
+    p('Unless the parties have agreed in writing that the Purchaser will collect Wood Pellets, the Seller is responsible for arranging delivery of Wood Pellets to the Purchaser’s Site, and Transport Costs will be invoiced in accordance with Schedule 2.');
+    p('If the parties have agreed in writing that the Purchaser will collect Wood Pellets:');
+    list(['(a) the Purchaser is responsible for arranging and paying all transport and insurance costs; and', '(b) the Transport Costs set out in Schedule 2 will not apply in respect of those Wood Pellets.']);
+    p('The parties agree that they may enter into discussions on transport and supply logistics where there are identifiable benefits and cost savings for both parties. Neither party will be under any obligation to accept a change proposal from the other party.');
+    h3('3.6', 'Delay in Delivery');
+    p('The Seller shall use reasonable endeavours to deliver Wood Pellets in accordance with each Weekly Demand Confirmation but the Purchaser acknowledges that logistics delays can occur from time to time. The Seller shall not be liable for any delay in delivery provided it has used reasonable endeavours to meet the scheduled delivery time and provided that it has notified the Purchaser of any anticipated delay.');
+    h3('3.7', 'Determination of Wood Pellet Quantity');
+    p('The Seller operates a certified truck loadout facility at the Seller’s Site, and also operates additional remote storage warehouses. Volumes of Wood Pellets delivered shall be determined by using one of two methods:');
+    list(['(a) Delivery from Seller’s Site — a docket from the certified weight scale dispenser located at the Seller’s Site.',
+      '(b) Delivery from Seller’s Warehouse — by weighing the Wood Pellets on a weighbridge or alternative scale that is certified by an authorised agency. A copy of the load docket will be provided by the Seller to the Purchaser.']);
+    h3('3.8', 'Supply for Purchaser’s internal use only');
+    p('The Purchaser may only use Wood Pellets supplied under this Agreement for its own internal business purposes. Without limiting the previous sentence, the Purchaser must not supply the Wood Pellets to any third party without the Seller’s prior written consent.');
+
+    h2('4', 'PRICE AND PAYMENT');
+    h3('4.1', 'Price');
+    p('The Price payable for the Wood Pellets (exclusive of GST, unless otherwise stated) is set out in Schedule 2.');
+    h3('4.2', 'Invoicing');
+    p('Unless specified otherwise in Schedule 2, the Seller shall invoice the Purchaser for all Wood Pellets delivered during a month by the 10th day of the following month. Each invoice shall:');
+    list(['(a) be sent by email in PDF format to the Purchaser’s nominated email address (multiple invoices may be sent in each email); and',
+      '(b) include the relevant purchase order number, a breakdown of the Price and a description of the Wood Pellets to which the invoice relates.']);
+    h3('4.3', 'Payment');
+    list(['(a) The Purchaser shall pay each invoice without set off or deduction (subject only to paragraph (b), below) by the 20th of the month in which it is issued.',
+      '(b) If the Purchaser, acting reasonably and in good faith, disputes any invoice (or part of any invoice), the Purchaser will notify the Seller of the reason for the dispute (setting out full detail) and may withhold the disputed amount only until the dispute is resolved in accordance with clause 11.',
+      '(c) If for any reason, other than as contemplated in clause 4.3(b), the Purchaser fails to pay any invoice in full by the due date, then the Purchaser will pay interest at the Default Interest Rate on the unpaid amount calculated on a monthly basis from the due date until payment is received in full. The Purchaser will also pay interest at the Default Interest Rate on the amount of any unpaid portion of any invoice which the Purchaser disputed under clause 4.3(b) and which was ultimately agreed or determined to have been payable, on a monthly basis from the due date until payment is received in full. This provision is without prejudice to any other rights or remedies available to the Seller.',
+      '(d) The Purchaser shall indemnify the Seller in respect of any Losses the Seller may incur in connection with the Purchaser’s breach of this Agreement or its termination, including Losses incurred or suffered by the Seller in taking any steps to enforce the Purchaser’s obligations under the Agreement following breach of any term of the Agreement by the Purchaser.']);
+    h3('4.4', 'Environmental Costs');
+    p('The Purchaser shall be liable for, and shall pay to the Seller on demand, any Environmental Costs. The Seller may, from time to time, issue invoices to the Purchaser reflecting such Environmental Costs, and the Purchaser must pay such invoices in accordance with the payment terms of this Agreement.');
+    h3('4.5', 'Minimum volume commitment');
+    p('Notwithstanding anything else in this Agreement, the Purchaser commits to purchase the Yearly Minimum Volume of Wood Pellets from the Seller in each Contract Year. If the Purchaser fails to purchase the Yearly Minimum Volume in any Contract Year, the Purchaser shall pay the Seller an amount equal to the shortfall quantity (being the difference between the Yearly Minimum Volume and the actual quantity purchased during the relevant Contract Year) at the Price. If in any Contract Year the Seller fails to supply a quantity of Wood Pellets that it is contractually obliged to supply, the Yearly Minimum Volume for that Contract Year shall be deemed reduced by that quantity. If this Agreement terminates or expires part way through a Contract Year, the Yearly Minimum Volume for that part Contract Year shall be reduced pro rata.');
+
+    h2('5', 'RISK AND TITLE');
+    h3('5.1', 'Risk and responsibility');
+    p('Seller retains title to the Wood Pellets, pending receipt of payment from the Purchaser for all Wood Pellets supplied from time to time, to the maximum extent permitted by law. Risk of loss or damage to Wood Pellets passes to the Purchaser on delivery or, if the parties have agreed that the Purchaser is to collect the Wood Pellets, upon loading at the Seller’s Site. The Purchaser acknowledges that this retention of title gives rise to a security interest in all Wood Pellets supplied to it (whether now or in the future) as security for the Purchaser’s payment obligations. The Seller may register a financing statement (or financing change statement) on the Personal Property Securities Register to perfect its security interest. The Purchaser shall promptly do all things (including signing any documents) and provide all information reasonably required by the Seller to enable the Seller to perfect and maintain the perfection of its security interest, and to ensure that the Seller’s security interest has the priority required. The Purchaser waives the right to receive a copy of the verification statement confirming registration of a financing statement or financing change statement relating to the security interest. The Purchaser agrees that nothing in section 134 of the Personal Property Securities Act 1999 (PPSA) shall apply to this Agreement or the security under this clause, and the Purchaser waives its rights under sections 121, 125, 126, 127, 129 and 131 of the PPSA.');
+
+    h2('6', 'WARRANTIES');
+    h3('6.1', 'Wood Pellets to meet Specification');
+    p('The Seller warrants that the Wood Pellets, when delivered by the Seller, will comply with the quality guarantee described in Schedule 1 (Quality Guarantee).');
+    h3('6.2', 'Remedy for non-compliance');
+    p('The Purchaser will notify the Seller promptly in writing if it considers that any Wood Pellets do not comply with the Quality Guarantee. The Seller shall assess the validity of that notice. If the Purchaser so requests, the Seller will arrange for a sample of the supplied Wood Pellets to be tested for compliance with the Quality Guarantee by Verum Group (or an alternative independent testing agency) (Testing Agency). If the tested sample of Wood Pellets is determined by the Testing Agency not to comply with the Quality Guarantee, the Seller may either: (a) reimburse the Purchaser for the affected quantity; or (b) replace the affected quantity, in each case subject to the Purchaser disposing of the non-compliant quantity of Wood Pellets in accordance with the Seller’s instructions. If the tested sample of Wood Pellets is determined by the Testing Agency to comply with the Quality Guarantee then no further action shall be required and the Purchaser shall promptly reimburse all costs associated with that testing. This clause 6.2 sets out the Purchaser’s sole remedy in respect of any non-conformance with the Quality Guarantee.');
+    h3('6.3', 'Exclusion of all other warranties');
+    p('Despite anything else in this Agreement:');
+    list(['(a) the parties acknowledge that the Wood Pellets supplied by the Seller and acquired by the Purchaser are supplied and acquired "in trade" within the meaning of the Fair Trading Act 1986, that sections 9, 12A, and 13 of the Fair Trading Act 1986 will not apply to this Agreement or as between the parties, and that it is fair and reasonable to exclude their application;',
+      '(b) the parties acknowledge that they are all in trade, the Wood Pellets supplied by the Seller and acquired by the Purchaser are supplied and acquired in trade, that the provisions of the Consumer Guarantees Act 1993 will not apply to this Agreement or as between the parties, and that it is fair and reasonable to exclude their application;',
+      '(c) the parties acknowledge that the implied warranties and conditions contained in the provisions of Part 3 of the Contract and Commercial Law Act 2017 will not apply;',
+      '(d) unless this agreement expressly provides otherwise, to the fullest extent permitted by law, all warranties, representations, conditions or other terms implied by law are excluded; and',
+      '(e) for the purposes of this clause, the parties acknowledge that they had a reasonable opportunity to review this agreement and receive advice on it.']);
+
+    h2('7', 'PARTIES’ OBLIGATIONS AT THE SITE');
+    p('Where the Purchaser (or their agent or contractor) enters upon any of the Seller’s property the Purchaser will comply with all directions given by the Seller relating to, or for the purposes of, the Seller’s operational and safety requirements. The Purchaser will indemnify the Seller for any costs, losses or expenses arising in connection with any damage to or destruction of any property located at any of the Seller’s property caused by the Purchaser or its agent or contractor.');
+
+    h2('8', 'TERMINATION');
+    h3('8.1', 'Mutual Termination Rights');
+    p('This Agreement may be terminated by either party with immediate effect by giving written notice to the other party (Defaulting Party) if:');
+    list(['(a) the Defaulting Party commits a material breach of this Agreement (not being a breach contemplated in (b) below) and, where such a breach or failure is capable of being remedied, it has not been remedied within 30 days after receipt of a request in writing from the other party to remedy the breach or failure;',
+      '(b) where the Purchaser is the Defaulting Party, the Purchaser fails to pay any amount due under this Agreement by the due date, and does not remedy that default within 5 days of receipt of a notification from the Seller. The Seller may suspend its performance under this Agreement without notice to the Purchaser if the Purchaser fails to pay any amount due under this Agreement by the due date, until all outstanding payments are made in full; or',
+      '(c) the Defaulting Party is declared or becomes insolvent in any jurisdiction, is unable to pay its debts as they fall due, or is presumed unable to pay its debts in accordance with the Companies Act 1993 or applicable overseas legislation, is wound up, in receivership, has an administrator or manager appointed or enters into any dealings with, or for the benefit of, any of its creditors with a view to avoiding (or in the expectation of) insolvency, or makes a general assignment or arrangement, compromise or composition with or for the benefit of its creditors, or stops or threatens to stop payments generally, or any other event analogous in nature to those listed.']);
+    h3('8.2', 'Seller Termination Rights');
+    p('In addition to the termination rights set out in clause 8.1, the Seller may terminate this Agreement if the Seller’s Site is anticipated to cease primary operations for more than 90 days, including where such cessation is due to regulatory intervention or Force Majeure Event. In this circumstance, the Seller will give the Purchaser six months’ notice (or such lesser notice period as is reasonable, in light of the reason for the cessation and the notice available to the Seller itself).');
+    h3('8.3', 'Effect of Termination');
+    p('Termination of this Agreement will not affect:');
+    list(['(a) the Purchaser’s obligation to pay all amounts payable by it under this Agreement in respect of the period prior to termination;', '(b) the liability of either party for any breach of this Agreement prior to, or at the time of, termination; and', '(c) any rights or remedies available to either party under this Agreement in respect of the period before termination.']);
+
+    h2('9', 'FORCE MAJEURE');
+    h3('9.1', 'Force Majeure Events and Relief from Liability');
+    p('The Seller shall not be liable for any failure to perform or delay in performance of its obligations hereunder to the extent caused by a Force Majeure Event.');
+
+    h2('10', 'GENERAL');
+    h3('10.1', 'Exclusion of liability');
+    p('Notwithstanding any other provision of this Agreement, under no circumstances will the Seller be liable for: (a) any loss of income or profits, harm to reputation or any consequential, indirect or special damage or injury of any kind suffered by the Purchaser or any other person; (b) any claim relating to Wood Pellets, if the Purchaser has not complied with applicable storage guidelines shared by the Seller or cannot demonstrate such compliance or if notice of that claim is not received within 12 months of the delivery date for the relevant Wood Pellets; or (c) any claim if it does not receive a written notice setting out full details of the same within 30 days of the fact, event or circumstance giving rise to that claim. The Purchaser will use reasonable endeavours to mitigate any loss or damage it suffers as a result of any breach by the Seller.');
+    h3('10.2', 'Limitation of Liability');
+    p('The Seller’s liability, however arising (whether in contract, tort (including negligence), under statute or otherwise), for any and all Losses suffered or incurred by all persons together under or in connection with this Agreement:');
+    list(['(a) in respect of any Wood Pellets, shall be limited to the price paid by the Purchaser for the affected pellets;', '(b) in respect of the failure to supply any Wood Pellets shall be limited to the price that would have been payable for such pellets; and', '(c) in respect of any matters not covered in clause 10.2(a) or (b), shall be limited to $10,000.']);
+    h3('10.3', 'No waiver');
+    p('No failure by the Seller to insist upon strict performance of this Agreement, or any delay in exercising any of its rights or remedies, constitutes a waiver or variation.');
+    h3('10.4', 'Amendments');
+    p('No amendment to this Agreement is effective unless it is in writing and signed by both parties.');
+    h3('10.5', 'Confidentiality');
+    p('Each party shall, and shall procure that its representatives shall, at all times (including after the Term), keep confidential and secure, and not use, any property and/or information produced for, or obtained from, the other party which is commercially sensitive or confidential, except:');
+    list(['(a) as strictly necessary to perform its obligations under this Agreement; or', '(b) with that other party’s prior written consent (including as to form and content).']);
+
+    h2('11', 'DISPUTE RESOLUTION');
+    p('New Zealand law governs this Agreement and all disputes arising under or in connection with this Agreement (including any disputes regarding its existence, validity or termination) (Disputes). The parties submit to the exclusive jurisdiction of the New Zealand courts.');
+    p('If any Dispute arises, in the first instance the party raising the Dispute must notify the other party in writing giving details of the Dispute. The Dispute must then be promptly referred to representatives of each party to attempt to resolve the Dispute. If the Dispute cannot be resolved through negotiation between the parties within 7 working days of delivery of that notice, then either party may take such further action as it considers necessary to enforce its rights under this Agreement. Nothing in this clause 11 will prevent either party from applying for urgent interim relief from a court of competent jurisdiction.');
+
+    h2('12', 'ASSIGNMENT');
+    p('The Purchaser may not assign its rights or obligations under this Agreement and any purported assignment is invalid. Any Change of Control of Purchaser shall be deemed to be an assignment for the purposes of this clause and the Purchaser shall immediately inform the Seller of any Change of Control.');
+
+    h2('13', 'NOTICES');
+    p('Any notice, demand or other communication required by this Agreement shall be in writing and shall be given or sent by tracked courier post, personal delivery or electronic mail to the address or email account of the relevant party specified in Schedule 1 or to such other address or email account as is notified from time to time. Notices sent by tracked courier post shall be deemed to have been received on the date tracking shows it was delivered and notices sent by personal delivery or electronic mail shall be deemed to have been received on the Working Day of despatch or, if received or delivered (in the place of receipt) after 5.00pm on a Working Day or a non-Working Day, on the next Working Day. In proving service by electronic mail, it shall be sufficient to prove that the document was properly addressed and sent, without a notified automated bounce-back.');
+
+    h2('14', 'CLAUSES SEVERABLE');
+    p('In the event that any clause or any part of any clause contained in this Agreement is declared invalid or unenforceable, all other clauses or parts of clauses contained in the Agreement shall remain in full force and effect and shall not be affected thereby.');
+
+    h2('15', 'SURVIVAL');
+    p('Clauses 2, 4, 5, 6.2, 6.3, 8.3, 10.1, 10.2, 10.3, 10.5, 11, 12, 13, 14, 15 and 17, together with any other clauses necessary to give effect to them, survive any termination or cancellation of this Agreement.');
+
+    h2('16', 'ENTIRE AGREEMENT AND AMENDMENTS');
+    p('This Agreement constitutes the entire agreement between the parties and supersedes and extinguishes (except as otherwise provided herein) all prior agreements and understandings between the parties with respect to the matters covered by this Agreement. No variation or amendment of this Agreement shall be effective unless in writing and executed by duly authorised representatives of each party. Without limiting the foregoing, in no event shall the Seller be bound by any terms and conditions communicated to it by the Purchaser (including as an attachment to a purchase order or similar).');
+
+    h2('17', 'ADDRESS FOR NOTICES');
+    b.push({ k: 'notices', seller: ['PO Box 953', 'Taupo 3378', 'New Zealand', 'Attention: Mr John Goodwin', 'Email: ' + NF_NOTICE_EMAIL],
+      purchaser: [v.site || '[Purchaser’s address]', v.country, 'Attention: ' + v.attn, 'Email: ' + v.email] });
+
+    brk();
+    b.push({ k: 'sig', purchaserName: v.name });
+
+    brk();
+    b.push({ k: 'schedule', n: '1', t: 'Description of the Wood Pellets' });
+    h3('1', 'QUALITY GUARANTEE — INTERNATIONAL "I2" SPECIFICATION');
+    p('The Wood Pellets will comply with the International I2 Standard at the time of delivery under this Agreement. The International I2 Standard is an international specification standard used by commercial and industrial boiler manufacturers. The table below lists the international I2 specification standards as of the date of this Agreement.');
+    b.push({ k: 'table', headers: ['Parameter', 'Units', 'Standard', 'Limit', 'Tolerance'], rows: SCHEDULE1_SPEC });
+    p('** Note that Schedule 2 contains a price adjustment mechanism to reflect variances in calorific values. The Purchaser shall have no additional rights in respect of any failure to achieve this calorific value (including any right to assert that Wood Pellets which fail to achieve it are not compliant with this agreement in any respect).');
+    h3('2', 'QUANTITIES TO BE PURCHASED');
+    p('The Seller agrees to supply the following quantities of Wood Pellets:');
+    list(['Contract Quantity: ' + v.qty + ' MT per Contract Year. Unless the Seller agrees otherwise in writing, in no event shall the Seller be obliged to supply more than:',
+      '— ' + v.daily + ' MT of Wood Pellets during any day', '— ' + v.monthly + ' MT of Wood Pellets during any month',
+      'Yearly Minimum Volume: ' + v.minVol + ' MT / Contract Year']);
+    p('Maximum Volumes: the Seller will reasonably consider any request from the Purchaser to supply additional volumes above the Contract Quantity, but provides no guarantee it will be able to do so.');
+
+    brk();
+    b.push({ k: 'schedule', n: '2', t: 'Key Terms and Pricing and Payment' });
+    h3('1', 'TERM');
+    p('Commencement Date: ' + v.commence);
+    p(v.term + ' years commencing on the Commencement Date ("the Term").');
+    h3('2', 'SITE');
+    p('The Seller’s site is located at 27 Aratiatia Road, Centennial Park, Taupo.');
+    p('The Purchaser’s site is located at ' + v.site + '.');
+    h3('3', 'PRICE');
+    p('Price = (Base Price × Energy Adjustment Factor) + Transport Costs (where applicable).');
+    h3('4', 'BASE PRICE');
+    p('The "Base Price" is the sum of the Fibre Price plus Conversion Costs. The Fibre Price is based upon a predetermined mix of fibre types, including but not limited to sawdust, shavings, chip and logs. If during the Term the input fibre mix changes, resulting in a material increase to the cost of input materials used in the manufacture of Wood Pellets, the Seller may adjust the Fibre Price as it considers necessary (acting reasonably) to reflect its own increased cost of input materials. The initial fibre mix for this Agreement is:');
+    list(['Sawdust: ' + v.sawdust + '%', 'Shavings: ' + v.shavings + '%', 'Chip: ' + v.chip + '%', 'Logs: ' + v.logs + '%', 'Other: ' + v.other + '%',
+      'Total: ' + (v.sawdust + v.shavings + v.chip + v.logs + v.other) + '%']);
+    p('The Base Price at the Commencement Date is $' + v.base + ' / MT, comprised of:');
+    list(['Fibre Price: $' + v.fibrePrice + '/MT', 'plus Conversion Costs: $' + v.conv + '/MT']);
+    h3('5', 'TRANSPORT COSTS');
+    p('Unless the parties have agreed in writing that the Purchaser will collect the Wood Pellets from the Seller’s Site, transport costs will be on-charged to the Purchaser at cost (on a per-tonne-delivered basis) including any FAF, as invoiced by the third-party transport provider or at market rates, where the Seller provides the delivery service.');
+    h3('6', 'ADJUSTMENTS TO THE BASE PRICE (ESCALATOR)');
+    p('The Base Price will be reviewed in the last quarter of each year during the Term, with changes effective from each anniversary of the Commencement Date following that review. The Base Price will be adjusted in accordance with the movement in the Producer Price Index (Inputs, All Industries) as calculated and published by Statistics New Zealand (PPI) since the last review (or the Commencement Date) (Adjusted Price). For the purposes of this clause, the parties agree that:');
+    list(['(a) the quarterly PPI index most recently preceding the review date will be used; and', '(b) the Adjusted Price will not be less than the Base Price as at the Commencement Date.']);
+    h3('7', 'ADJUSTMENTS TO THE BASE PRICE (MATERIAL CHANGE)');
+    p('In addition to the above, the Seller may adjust the Base Price not more than once per Contract Year by giving the Purchaser at least 30 days’ written notice if the Seller incurs any material increase in the cost of manufacturing, supplying, or delivering Wood Pellets due to circumstances beyond the Seller’s reasonable control, including (without limitation) increases in the cost of raw materials, energy, labour, freight, or compliance with any law, regulation, or government scheme. Any such price adjustment shall be limited to the extent reasonably necessary to reflect the impact of the increased costs and shall avoid double-up with other adjustments under this Agreement.');
+    h3('8', 'ENERGY ADJUSTMENT FACTOR');
+    p('The Energy Adjustment Factor shall be calculated as follows: Energy Adjustment Factor = A / 17, where "A" means the deemed NCV of Wood Pellets, expressed in GJ/MT and determined as below.');
+    p('The Wood Pellets shall be tested for Net Calorific Value (NCV) according to the agreed testing regime below. The NCV samples will be averaged over the calendar month and be used to determine the amount of energy that has been delivered.');
+    p('Testing Process:');
+    list(['The Seller will take a representative sample (200g) daily on dispatch to the Purchaser’s site (sampled as the Wood Pellets leave the Taupo production facility, or the intermediate storage facility or both as required).',
+      'These samples will be consolidated to form a "Composite Sample" for NCV testing.', 'The Composite Sample will be sent monthly to the Testing Agency for Net Calorific Value analysis.',
+      'The NCV result will be shared on receipt to the nominated Purchaser’s representative(s).',
+      'This NCV result will be used for the purpose of calculating the Energy Adjustment Factor for Wood Pellets supplied during the month of testing.']);
+    return b;
+  }
+  var NF_NOTICE_EMAIL = 'accounts@naturesflame.co.nz';
+  var SCHEDULE1_SPEC = [
+    ['Physical parameters', '', '', '', ''],
+    ['Diameter', 'mm', 'ISO 17829', '6 to 10', 'within range'],
+    ['Length ≤ 50 mm', 'weight%', 'ISO 17829', '99.9%', 'within range'],
+    ['Length ≤ 40 mm', 'weight%', 'ISO 17829', '99%', 'within range'],
+    ['Water content', '% DM', 'ISO 18134', '≤ 10%', '0.5% absolute'],
+    ['Bulk (apparent) density', 'kg/m3', 'ISO 17828', '≥ 600', '2% of limit'],
+    ['Net calorific value (NAR)', 'GJ/MT', 'ISO 18125', '≥ 16.5**', '0.3 GJ/MT'],
+    ['Ash content', 'weight% DM', 'ISO 18122', '≤ 1.5%', '10% of limit'],
+    ['Elementary composition', '', '', '', ''],
+    ['Cl', 'weight% DM', 'ISO 16994', '≤ 0.05%', '0.01% absolute'],
+    ['N', 'weight% DM', 'ISO 16948', '≤ 0.3%', '10% of limit'],
+    ['S', 'weight% DM', 'ISO 16994', '≤ 0.2%', '20% of limit'],
+    ['Trace elements', '', '', '', ''],
+    ['As', 'mg/kg DM', 'ISO 16968', '≤ 2', '0.064 absolute'],
+    ['Cd', 'mg/kg DM', 'ISO 16968', '≤ 1', '0.064 absolute'],
+    ['Cr', 'mg/kg DM', 'ISO 16968', '≤ 15', '0.032 absolute'],
+    ['Cu', 'mg/kg DM', 'ISO 16968', '≤ 20', '0.043 absolute'],
+    ['Pb', 'mg/kg DM', 'ISO 16968', '≤ 20', '0.033 absolute'],
+    ['Hg', 'mg/kg DM', 'ISO 16968', '≤ 0.1', '0.0046 absolute'],
+    ['Zn', 'mg/kg DM', 'ISO 16968', '≤ 200', '5.43 absolute'],
+    ['Fines ≤ 3.15 mm', 'weight% ar', 'ISO 17827-2', '≤ 5%', '1% absolute'],
+    ['Durability', 'weight% ar', 'ISO 17831-1', '97.0%', '0.5% absolute']
+  ];
+
+  function renderAgreementHtml(blocks) {
+    return blocks.map(function (b) {
+      if (b.k === 'h1') return '<h1 class="ag-h1">' + esc(b.t) + '</h1>';
+      if (b.k === 'parties') return '<p class="ag-p"><strong>BETWEEN:</strong> ' + esc(b.seller) + '<br><strong>AND:</strong> ' + esc(b.purchaser) + '</p>';
+      if (b.k === 'h2') return '<h2 class="ag-h2">' + esc(b.n) + '. ' + esc(b.t) + '</h2>';
+      if (b.k === 'h3') return '<h3 class="ag-h3">' + esc(b.n) + '. ' + esc(b.t) + '</h3>';
+      if (b.k === 'p') return '<p class="ag-p">' + esc(b.t) + '</p>';
+      if (b.k === 'list') return '<div class="ag-list">' + b.items.map(function (i) { return '<p class="ag-p">' + esc(i) + '</p>'; }).join('') + '</div>';
+      if (b.k === 'table') return '<table class="ag-table"><thead><tr>' + b.headers.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join('') +
+        '</tr></thead><tbody>' + b.rows.map(function (r) { return '<tr>' + r.map(function (c, i) { return (i === 0 && !r[1]) ? '<td colspan="5" class="ag-tsec"><strong>' + esc(c) + '</strong></td>' : (i === 0 || r[1]) ? '<td>' + esc(c) + '</td>' : ''; }).filter(Boolean).join('') + '</tr>'; }).join('') + '</tbody></table>';
+      if (b.k === 'schedule') return '<h1 class="ag-h1">SCHEDULE ' + esc(b.n) + '</h1><h2 class="ag-h2" style="text-align:center">' + esc(b.t) + '</h2>';
+      if (b.k === 'notices') return '<div class="ag-grid2"><div><strong>The Seller:</strong>' + b.seller.map(function (l) { return '<br>' + esc(l); }).join('') + '</div>' +
+        '<div><strong>The Purchaser:</strong>' + b.purchaser.map(function (l) { return '<br>' + esc(l); }).join('') + '</div></div>';
+      if (b.k === 'sig') return '<p class="ag-p">SIGNED BY THE PARTIES on ______________________ 20__</p>' +
+        ['Purchaser', 'Nature’s Flame Limited'].map(function (who, i) {
+          var name = i === 0 ? b.purchaserName : 'NATURE’S FLAME LIMITED';
+          return '<div class="ag-sigblock"><p class="ag-p">SIGNED for and on behalf of<br>' + esc(name) + ' by:</p>' +
+            '<p class="ag-sigline">______________________________ &nbsp;&nbsp;&nbsp; ______________________</p><p class="ag-p">Title: ________________________</p>' +
+            '<p class="ag-p" style="margin-top:14px">WITNESSED by:</p><p class="ag-sigline">Print name: ___________________ &nbsp;&nbsp;&nbsp; ______________________</p>' +
+            '<p class="ag-p">Occupation: ____________________&nbsp;&nbsp;&nbsp; Address: ______________________</p></div>';
+        }).join('');
+      return '';
+    }).join('');
+  }
+
+  // PDF: a new, self-contained builder (not refactored out of buildQuotePdf) so the already-approved
+  // Quotes PDF code is never touched by this feature. Reuses the genuinely generic pieces as-is:
+  // loadPdfFonts/PDF_FONTS, MARK_PATHS/drawPath (brand mark), NF_ADDRESS. Blank wet-ink signature lines
+  // only — unlike Quotes, this document is physically signed by the customer, not digitally.
+  function buildAgreementPdf(a) {
+    if (!window.jspdf || !window.jspdf.jsPDF) return Promise.reject(new Error('The PDF library did not load. Check your internet connection and reload the page.'));
+    return loadPdfFonts().then(function (fonts) {
+      var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', compress: true });
+      var F = { body: 'helvetica', semi: 'helvetica', bold: 'helvetica', cond: 'helvetica' };
+      if (fonts) {
+        [['OpenSans-normal', 'OpenSans', 'normal'], ['OpenSans-bold', 'OpenSans', 'bold'], ['OpenSansSemi-normal', 'OpenSansSemi', 'normal'], ['OpenSansCond-bold', 'OpenSansCond', 'bold']].forEach(function (f) {
+          doc.addFileToVFS(f[0] + '.ttf', fonts[f[0]]); doc.addFont(f[0] + '.ttf', f[1], f[2]);
+        });
+        F = { body: 'OpenSans', semi: 'OpenSansSemi', bold: 'OpenSans', cond: 'OpenSansCond' };
+      }
+      var txt = function (s) { return fonts ? String(s) : String(s).replace(/[’‘]/g, "'").replace(/[“”]/g, '"').replace(/ō/g, 'o').replace(/[–—]/g, '-').replace(/®/g, '(R)').replace(/·/g, '-').replace(/×/g, 'x').replace(/≤/g, '<=').replace(/≥/g, '>='); };
+      var W = 210, H = 297, M = 18, CW = W - 2 * M;
+      var FOREST = [29, 51, 47], OLIVE = [102, 120, 60], GREEN = [130, 165, 25], SAGE = [205, 220, 185], INK = [29, 42, 38], MUTED = [94, 106, 98], LINE = [221, 227, 210];
+      var y = 0;
+      var font = function (f, style, size, col) { doc.setFont(F[f], f === 'bold' || f === 'cond' ? 'bold' : 'normal'); doc.setFontSize(size); doc.setTextColor(col[0], col[1], col[2]); };
+      var footer = function () {
+        doc.setDrawColor(GREEN[0], GREEN[1], GREEN[2]); doc.setLineWidth(0.6); doc.line(M, H - 16, W - M, H - 16);
+        font('body', 'normal', 7.5, MUTED); doc.text(txt(NF_ADDRESS), M, H - 11);
+      };
+      var newPage = function () { footer(); doc.addPage(); y = M; };
+      var ensure = function (h) { if (y + h > H - 24) newPage(); };
+      doc.setFillColor(FOREST[0], FOREST[1], FOREST[2]); doc.rect(0, 0, W, 34, 'F');
+      MARK_PATHS.forEach(function (p) { drawPath(doc, p[0], M, 7 + p[2] * 0.5, 0.5, p[1]); });
+      font('bold', 'bold', 13, [255, 255, 255]); doc.text(txt('Nature’s'), M + 16, 15); doc.text('Flame', M + 16, 21.5);
+      font('cond', 'bold', 17, [255, 255, 255]); doc.text(txt('SUPPLY AGREEMENT'), W - M, 14, { align: 'right' });
+      font('body', 'normal', 9, SAGE); doc.text(txt(a.number || 'Draft'), W - M, 20, { align: 'right' });
+      doc.text(txt(a.company || ''), W - M, 25, { align: 'right' });
+      doc.setFillColor(GREEN[0], GREEN[1], GREEN[2]); doc.rect(0, 34, W, 1.4, 'F');
+      y = 46;
+      composeAgreement(a).forEach(function (b) {
+        if (b.k === 'pagebreak') { newPage(); return; }
+        if (b.k === 'h1') { ensure(14); font('cond', 'bold', 15, FOREST); doc.text(txt(b.t), W / 2, y, { align: 'center', maxWidth: CW }); y += 9; return; }
+        if (b.k === 'schedule') { ensure(16); font('cond', 'bold', 15, FOREST); doc.text(txt('SCHEDULE ' + b.n), W / 2, y, { align: 'center' }); y += 7; font('cond', 'bold', 11, OLIVE); doc.text(txt(b.t), W / 2, y, { align: 'center' }); y += 9; return; }
+        if (b.k === 'parties') {
+          ensure(16); font('body', 'normal', 9, INK);
+          var l1 = doc.splitTextToSize(txt('BETWEEN: ' + b.seller), CW); doc.text(l1, M, y); y += l1.length * 4.4 + 1;
+          var l2 = doc.splitTextToSize(txt('AND: ' + b.purchaser), CW); ensure(l2.length * 4.4 + 2); doc.text(l2, M, y); y += l2.length * 4.4 + 6;
+          return;
+        }
+        if (b.k === 'h2') { ensure(10); font('bold', 'bold', 10.5, FOREST); doc.text(txt(b.n + '. ' + b.t), M, y); y += 6.5; return; }
+        if (b.k === 'h3') { ensure(8); font('semi', 'normal', 9.5, OLIVE); doc.text(txt(b.n + '. ' + b.t), M, y); y += 5.5; return; }
+        if (b.k === 'p') {
+          font('body', 'normal', 8.8, INK);
+          var pl = doc.splitTextToSize(txt(b.t), CW);
+          ensure(pl.length * 4.1 + 2); doc.text(pl, M, y); y += pl.length * 4.1 + 2.6;
+          return;
+        }
+        if (b.k === 'list') {
+          font('body', 'normal', 8.8, INK);
+          b.items.forEach(function (it) {
+            var il = doc.splitTextToSize(txt(it), CW - 5);
+            ensure(il.length * 4.1 + 1); doc.text(il, M + 5, y); y += il.length * 4.1 + 1.4;
+          });
+          y += 1.2;
+          return;
+        }
+        if (b.k === 'table') {
+          var cols = [58, 22, 28, 26, 0]; cols[4] = CW - cols[0] - cols[1] - cols[2] - cols[3];
+          var rowH = 5.2;
+          ensure(rowH * 2);
+          font('bold', 'bold', 7.8, [255, 255, 255]); doc.setFillColor(OLIVE[0], OLIVE[1], OLIVE[2]); doc.rect(M, y, CW, rowH, 'F');
+          var cx = M; b.headers.forEach(function (h, i) { doc.text(txt(h), cx + 1.5, y + 3.6); cx += cols[i]; });
+          y += rowH;
+          b.rows.forEach(function (r) {
+            ensure(rowH);
+            if (!r[1]) { font('bold', 'bold', 7.8, FOREST); doc.setFillColor(236, 242, 228); doc.rect(M, y, CW, rowH, 'F'); doc.text(txt(r[0]), M + 1.5, y + 3.6); y += rowH; return; }
+            doc.setDrawColor(LINE[0], LINE[1], LINE[2]); doc.setLineWidth(0.2); doc.line(M, y + rowH, M + CW, y + rowH);
+            font('body', 'normal', 7.6, INK); var cx2 = M; r.forEach(function (c, i) { doc.text(txt(String(c)), cx2 + 1.5, y + 3.6, { maxWidth: cols[i] - 2 }); cx2 += cols[i]; });
+            y += rowH;
+          });
+          y += 4;
+          return;
+        }
+        if (b.k === 'notices') {
+          ensure(26); var col2 = M + CW / 2 + 4;
+          font('bold', 'bold', 8.5, OLIVE); doc.text('THE SELLER', M, y); doc.text('THE PURCHASER', col2, y); y += 4.6;
+          font('body', 'normal', 8.5, INK);
+          for (var i = 0; i < Math.max(b.seller.length, b.purchaser.length); i++) { if (b.seller[i]) doc.text(txt(b.seller[i]), M, y, { maxWidth: CW / 2 - 4 }); if (b.purchaser[i]) doc.text(txt(b.purchaser[i]), col2, y, { maxWidth: CW / 2 - 4 }); y += 4.2; }
+          y += 4;
+          return;
+        }
+        if (b.k === 'sig') {
+          ensure(10); font('body', 'normal', 9, INK); doc.text(txt('SIGNED BY THE PARTIES on ______________________ 20__'), M, y); y += 10;
+          [b.purchaserName, 'NATURE’S FLAME LIMITED'].forEach(function (name) {
+            ensure(46);
+            font('body', 'normal', 8.8, INK); doc.text(txt('SIGNED for and on behalf of ' + name + ' by:'), M, y); y += 9;
+            doc.setDrawColor(INK[0], INK[1], INK[2]); doc.setLineWidth(0.3); doc.line(M, y, M + 75, y); doc.line(M + 95, y, M + 95 + 60, y);
+            font('body', 'normal', 7.5, MUTED); doc.text('Signature', M, y + 4); doc.text('Name / Title', M + 95, y + 4); y += 11;
+            font('body', 'normal', 8.8, INK); doc.text('Title: __________________________________', M, y); y += 11;
+            doc.text(txt('WITNESSED by:'), M, y); y += 7;
+            doc.line(M, y, M + 75, y); doc.line(M + 95, y, M + 95 + 60, y);
+            font('body', 'normal', 7.5, MUTED); doc.text('Print name / occupation / address', M, y + 4); doc.text('Signature', M + 95, y + 4); y += 13;
+          });
+          return;
+        }
+      });
+      footer();
+      var pages = doc.getNumberOfPages();
+      for (var pg = 1; pg <= pages; pg++) { doc.setPage(pg); font('body', 'normal', 7.5, MUTED); doc.text('Page ' + pg + ' of ' + pages, W - M, H - 11, { align: 'right' }); }
+      return doc.output('arraybuffer');
+    });
+  }
+  function pdfNameAgreement(a) { return ((a.number || 'Draft') + ' Natures Flame supply agreement ' + (a.company || '')).replace(/[^A-Za-z0-9 \-]/g, '').replace(/\s+/g, ' ').trim() + '.pdf'; }
+  function agreementEmailText(a) {
+    var to = a.noticeEmail || a.email || '', name = a.attentionName || a.contactName || '';
+    var subject = 'Supply Agreement ' + (a.number || '') + ' for signature – Nature’s Flame';
+    var body = 'Kia ora' + (name ? ' ' + name.split(' ')[0] : '') + ',\n\nPlease find attached the Supply Agreement for the supply of wood pellets, ' +
+      'as agreed. Please review, sign both copies where indicated (a witness signature is also needed), and return a signed copy to us.\n\n' +
+      'If you have any questions, let us know.\n\nNgā mihi,\nNature’s Flame';
+    return { to: to, name: name, subject: subject, body: body };
+  }
+  function buildAgreementEml(a, pdfBuf) {
+    var e = agreementEmailText(a), bd = 'NFA' + uid();
+    var html = '<html><body style="font-family:Segoe UI,Arial,sans-serif;font-size:11pt;color:#1D2A26">' + e.body.split('\n').map(function (l) { return l ? esc(l) : '&nbsp;'; }).join('<br>') + '</body></html>';
+    return ['To: ' + (e.name ? '=?UTF-8?B?' + b64utf8(e.name) + '?= ' : '') + '<' + e.to + '>', 'Subject: =?UTF-8?B?' + b64utf8(e.subject) + '?=',
+      'X-Unsent: 1', 'MIME-Version: 1.0', 'Content-Type: multipart/mixed; boundary="' + bd + '"', '', '--' + bd,
+      'Content-Type: text/html; charset="utf-8"', 'Content-Transfer-Encoding: base64', '', wrap76(b64utf8(html)), '',
+      '--' + bd, 'Content-Type: application/pdf; name="' + pdfNameAgreement(a) + '"', 'Content-Disposition: attachment; filename="' + pdfNameAgreement(a) + '"',
+      'Content-Transfer-Encoding: base64', '', wrap76(bufToB64(pdfBuf)), '', '--' + bd + '--', ''].join('\r\n');
+  }
+
   function priceCheck(q) {
     var avg = realisedPrice(q.product), price = num(q.price);
     if (!avg) return { avg: null, pct: null, low: true, text: 'No sales history for this product to compare the price with.' };
@@ -2267,7 +2892,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   function currentKey() {
     if (st.view === 'deal') return 'pipeline';
     if (st.view === 'account') return 'accounts';
-    if (st.view === 'contract') return 'contracts';
+    if (st.view === 'contract' || st.view === 'agreement' || st.view === 'agreementEdit') return 'contracts';
     if (st.view === 'prospect' || st.view === 'prospectNew') return 'prospects';
     if (st.view === 'quote' || st.view === 'quoteEdit' || st.view === 'quoteTerms') return 'quotes';
     if (st.view === 'complaint' || st.view === 'complaintNew') return 'complaints';
@@ -2354,6 +2979,138 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     return '<tr><td><button class="lnk" data-con="' + esc(c.key) + '">' + esc(c.company) + '</button><div class="tiny">' + esc(c.no || 'No contract number') + ' · ' + esc(c.lines[0].services) + (c.lines.length > 1 ? ' +' + (c.lines.length - 1) + ' lines' : '') + '</div></td>' +
       '<td>' + esc(c.type) + '</td><td>' + esc(c.status || '—') + '</td><td>' + eb + '</td><td>' + rb + '</td><td>' + (c.link ? docLink(c, 'Open') : '<span class="tiny">—</span>') + '</td></tr>';
   }
+  function agreementPaper(a) { return '<div class="paper ag-paper">' + renderAgreementHtml(composeAgreement(a)) + '</div>'; }
+  function vAgreementEdit() {
+    var f = st.saf || (st.saf = blankAgreement());
+    var errs = st.safErrors || [];
+    var back = st.aEditId ? 'agreement' : (f.lead ? 'prospect' : 'contracts');
+    var mixTotal = fibreMixTotal(f);
+    var mixCard = function (t) { return t ? '<div class="card ' + (t === 100 ? 'info-card' : 'warn-card') + '" style="margin-top:10px">Fibre mix totals ' + t + '%' + (t === 100 ? '.' : ' — should add up to 100%.') + '</div>' : ''; };
+    return '<button class="back" data-go="' + back + '">← ' + (st.aEditId ? 'Back to agreement' : 'Cancel') + '</button>' +
+      '<div><div class="eyebrow">Stage 2 · Run-rate · Supply agreements</div><h1>' + (st.aEditId ? 'Edit supply agreement' : 'Create supply agreement') + '</h1><p class="sub">Fill in the left; the agreement on the right updates as you type. Saving keeps it as a draft until it is sent to ' + esc(APPROVER.name) + ' for approval.</p></div>' +
+      (errs.length ? '<div class="card err-card"><strong>Please complete:</strong> ' + esc(errs.join(', ')) + '</div>' : '') +
+      '<div class="q-split"><div style="display:flex;flex-direction:column;gap:16px;min-width:0">' +
+      '<section class="card"><h2 style="margin-bottom:10px">Customer</h2><div class="form-grid">' +
+      field('saf-company', 'Company', inp('saf-company', 'saf:company', f, ' list="saf-company-list" autocomplete="off" placeholder="Search by name…"') +
+        '<datalist id="saf-company-list">' + companyDirectory().map(function (o) { return '<option value="' + esc(o.name) + '">'; }).join('') + '</datalist>', true,
+        '<span id="a-company-hint">' + agreementCompanyHint(f) + '</span>') +
+      field('saf-contact', 'Contact name', inp('saf-contact', 'saf:contactName', f)) +
+      field('saf-email', 'Contact email', inp('saf-email', 'saf:email', f, ' type="text" inputmode="email"')) +
+      field('saf-phone', 'Contact phone', inp('saf-phone', 'saf:phone', f, ' type="tel"')) +
+      '</div></section>' +
+      '<section class="card"><h2 style="margin-bottom:4px">Purchaser legal details</h2><p class="small muted" style="margin:0 0 10px">Goes on the contract itself — the parties clause, Background, Schedule 2 Site, and the Notices page.</p><div class="form-grid">' +
+      field('saf-legal', 'Purchaser legal entity name', inp('saf-legal', 'saf:legalName', f, ' placeholder="e.g. Example Dairy Co Limited"'), true) +
+      field('saf-country', 'Country of incorporation', inp('saf-country', 'saf:country', f)) +
+      field('saf-coNo', 'Company number', inp('saf-coNo', 'saf:companyNo', f)) +
+      field('saf-biz', 'Purchaser’s business', inp('saf-biz', 'saf:businessDescription', f, ' placeholder="e.g. a producer of dairy products"'), false, 'Feeds the Background clause') +
+      field('saf-site', 'Purchaser’s site address', inp('saf-site', 'saf:purchaserSite', f), false, 'Used for Background, Schedule 2 Site and the default Delivery Point') +
+      field('saf-delivery', 'Delivery Point (if different)', inp('saf-delivery', 'saf:deliveryPoint', f)) +
+      field('saf-attn', 'Notices — Attention', inp('saf-attn', 'saf:attentionName', f)) +
+      field('saf-notice-email', 'Notices — Email', inp('saf-notice-email', 'saf:noticeEmail', f, ' type="text" inputmode="email"')) +
+      '</div></section>' +
+      '<section class="card"><h2 style="margin-bottom:10px">Term</h2><div class="form-grid">' +
+      field('saf-commence', 'Commencement date', inp('saf-commence', 'saf:commencementDate', f, ' type="date"')) +
+      field('saf-term', 'Term (years)', inp('saf-term', 'saf:termYears', f, ' inputmode="decimal"')) +
+      '</div></section>' +
+      '<section class="card"><h2 style="margin-bottom:10px">Volumes</h2><div class="form-grid">' +
+      field('saf-qty', 'Contract Quantity (MT / Contract Year)', inp('saf-qty', 'saf:contractQty', f, ' inputmode="decimal"'), true) +
+      field('saf-minvol', 'Yearly Minimum Volume (MT)', inp('saf-minvol', 'saf:yearlyMinVolume', f, ' inputmode="decimal" placeholder="Defaults to Contract Quantity"')) +
+      field('saf-daily', 'Daily max (MT, optional)', inp('saf-daily', 'saf:dailyMax', f, ' inputmode="decimal"')) +
+      field('saf-monthly', 'Monthly max (MT, optional)', inp('saf-monthly', 'saf:monthlyMax', f, ' inputmode="decimal"')) +
+      '</div></section>' +
+      '<section class="card"><h2 style="margin-bottom:4px">Pricing</h2><p class="small muted" style="margin:0 0 10px">Base Price = Fibre Price + Conversion Costs (Conversion Costs should include Nature’s Flame’s margin).</p><div class="form-grid">' +
+      field('saf-fibreprice', 'Fibre Price ($/MT)', inp('saf-fibreprice', 'saf:fibrePrice', f, ' inputmode="decimal"'), true) +
+      field('saf-conv', 'Conversion Costs ($/MT)', inp('saf-conv', 'saf:conversionCost', f, ' inputmode="decimal"')) + '</div>' +
+      '<p class="small" style="margin:8px 0" id="a-baseprice">' + basePriceLine(f) + '</p>' +
+      '<div class="form-grid">' +
+      field('saf-sawdust', 'Sawdust %', inp('saf-sawdust', 'saf:fibreSawdust', f, ' inputmode="decimal"')) +
+      field('saf-shavings', 'Shavings %', inp('saf-shavings', 'saf:fibreShavings', f, ' inputmode="decimal"')) +
+      field('saf-chip', 'Chip %', inp('saf-chip', 'saf:fibreChip', f, ' inputmode="decimal"')) +
+      field('saf-logs', 'Logs %', inp('saf-logs', 'saf:fibreLogs', f, ' inputmode="decimal"')) +
+      field('saf-other', 'Other %', inp('saf-other', 'saf:fibreOther', f, ' inputmode="decimal"')) + '</div>' +
+      '<div id="a-check">' + mixCard(mixTotal) + '</div></section>' +
+      (st.crmError ? '<p class="small" style="color:var(--alert-ink);margin:0">' + esc(st.crmError) + '</p>' : '') +
+      '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-olive" data-aact="save-draft">' + (st.aEditId ? 'Save changes' : 'Save draft') + '</button><button class="btn btn-quiet" data-go="' + back + '">Cancel</button></div>' +
+      '</div><div class="q-preview" id="a-preview">' + agreementPaper(agreementDocFromForm(f)) + '</div></div>';
+  }
+  function renderAgreementLive() {
+    // same keystroke-safety rule as renderQuoteLive(): never call the full render() from an agreement-form
+    // input/textarea keystroke, only refresh the preview + derived bits by id, so focus and cursor position
+    // in whatever field is being typed into is never destroyed.
+    var f = st.saf; if (!f) return;
+    var ap = document.getElementById('a-preview'); if (ap) ap.innerHTML = agreementPaper(agreementDocFromForm(f));
+    var bp = document.getElementById('a-baseprice'); if (bp) bp.innerHTML = basePriceLine(f);
+    var ac = document.getElementById('a-check');
+    if (ac) {
+      var t = fibreMixTotal(f);
+      ac.innerHTML = t ? '<div class="card ' + (t === 100 ? 'info-card' : 'warn-card') + '" style="margin-top:10px">Fibre mix totals ' + t + '%' + (t === 100 ? '.' : ' — should add up to 100%.') + '</div>' : '';
+    }
+    var ch = document.getElementById('a-company-hint'); if (ch) ch.innerHTML = agreementCompanyHint(f);
+  }
+  function vAgreement() {
+    var id = st.agreementId, a = SUPPLYAGREEMENTS[id];
+    if (!a) return '<button class="back" data-go="contracts">← Contracts</button><p class="muted">This agreement is not available. It may still be loading.</p>';
+    var s = agreementState(id, a);
+    var actions = [];
+    if (s.key === 'Draft' || s.key === 'Returned') actions.push('<button class="btn btn-olive" data-aact="submit-open">Submit to ' + esc(APPROVER.name) + ' for approval…</button>',
+      '<button class="btn btn-quiet" data-aact="edit">Edit</button>', '<button class="btn btn-quiet" data-aact="delete">Delete draft</button>');
+    if (s.key === 'Approved' || s.key === 'Signed') actions.push('<button class="btn btn-olive" data-aact="pdf">Download PDF</button>', '<button class="btn btn-olive" data-aact="eml">Create Outlook email draft</button>');
+    if (s.key === 'Approved') actions.push('<button class="btn btn-quiet" data-aact="sign-open">Record signing…</button>');
+    var panel = st.aPanel;
+    var html = (a.lead ? '<button class="back" data-lead="' + esc(a.lead) + '">← Back to prospect</button>' : '<button class="back" data-go="contracts">← Contracts</button>') +
+      '<div class="card-head" style="align-items:flex-end"><div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h1>' + esc(a.number || 'Draft agreement') + '</h1>' + aBadge(s) + '</div>' +
+      '<p class="sub">' + esc(a.company || '') + ' · Wood Pellets' + (a.contractQty ? ' · ' + esc(nt(a.contractQty)) + ' MT/yr' : '') + '</p></div></div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap">' + actions.join('') + '</div>';
+    if (st.aMsg) html += '<p class="small" style="margin:0">' + esc(st.aMsg) + '</p>';
+    if (st.crmError && !panel) html += '<p class="small" style="color:var(--alert-ink);margin:0">' + esc(st.crmError) + '</p>';
+    if (panel === 'submit') {
+      html += '<section class="card review-box"><h2 style="margin-bottom:4px">Submit for approval</h2><p class="small muted" style="margin:0 0 10px">' + esc(APPROVER.name) + ' (' + esc(APPROVER.title) + ') reviews and numbers it before it can be downloaded or sent.</p>' +
+        '<label class="small muted" for="as-reason">Note for ' + esc(APPROVER.name) + ' (optional)</label><textarea id="as-reason" data-asf="reason" rows="2"></textarea>' +
+        '<div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-olive" data-aact="submit">Submit for approval</button><button class="btn btn-quiet" data-aact="close">Cancel</button></div></section>';
+    }
+    if (s.key === 'Awaiting approval' || s.key === 'Returned') {
+      if (CAN_APPROVE) html += '<section class="card review-box"><h2 style="margin-bottom:4px">Review and approve</h2>' +
+        (a.approvalReason ? '<p class="small" style="margin:0 0 8px">Note from the preparer: “' + esc(a.approvalReason) + '”</p>' : '') +
+        '<label class="small muted" for="ap2-comment">Comment (required to send back)</label><textarea id="ap2-comment" data-apf2="comment" rows="2"></textarea>' +
+        '<div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-olive" data-aact="approve">Approve</button><button class="btn btn-quiet" data-aact="return">Send back</button></div></section>';
+      else html += '<div class="card info-card">Waiting for ' + esc(APPROVER.name) + ' to review and approve.' + (s.key === 'Returned' ? ' Sent back: “' + esc((s.ap && s.ap.comment) || '') + '”' : '') + '</div>';
+    }
+    if (panel === 'sign') {
+      var sf2 = st.agf || (st.agf = { at: iso(TODAY), start: a.commencementDate || '' });
+      html += '<section class="card review-box"><h2 style="margin-bottom:4px">Record signing</h2><p class="small muted" style="margin:0 0 10px">Contract number ' + esc(a.number) + ' is already assigned. Records the signing and prepares the Key Contracts Register entry.</p><div class="form-grid">' +
+        field('ag-at', 'Date signed', inp('ag-at', 'agf:at', sf2, ' type="date"')) +
+        field('ag-start', 'Supply start date', inp('ag-start', 'agf:start', sf2, ' type="date"')) +
+        field('ag-sap', 'SAP customer number', inp('ag-sap', 'agf:sapCode', sf2, ' list="sap-codes3"'), false, 'Optional now; needed to detect the first sale') +
+        field('ag-link', 'Signed contract link (SharePoint)', inp('ag-link', 'agf:link', sf2, ' type="url" placeholder="https://naturesflame451.sharepoint.com/…"')) + '</div>' +
+        '<datalist id="sap-codes3">' + ACC.filter(function (x) { return x.real; }).map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.name) + '</option>'; }).join('') + '</datalist>' +
+        '<div style="display:flex;gap:8px;margin-top:6px"><button class="btn btn-olive" data-aact="sign-save">Record signing</button><button class="btn btn-quiet" data-aact="close">Cancel</button></div></section>';
+    }
+    if (s.key === 'Signed' && a.signed) {
+      var reg = a.lead && LEADS[a.lead] ? inRegister(LEADS[a.lead]) : false;
+      html += '<section class="card"><div class="card-head"><h2>Key Contracts Register</h2>' + (reg ? '<span class="badge st-Customer">In register</span>' : '<span class="badge b-soon">Not yet in register</span>') + '</div>' +
+        (a.lead ? '<p class="small muted" style="margin:6px 0 10px">See the linked prospect for the register-row copy tool.</p>' :
+          '<p class="small muted" style="margin:6px 0 10px">Copy this row into the Key Contracts Register workbook on SharePoint.</p><div class="tbl-wrap"><table class="tbl"><tbody>' +
+          REGISTER_COLS.map(function (c, i) { return '<tr><th style="width:38%">' + esc(c) + '</th><td>' + esc(agreementRegisterRow(a)[i] || '—') + '</td></tr>'; }).join('') + '</tbody></table></div>') +
+        (a.signed.link ? '<p style="margin:10px 0 0"><a class="doc-link" href="' + esc(a.signed.link) + '" target="_blank" rel="noopener noreferrer">Open the signed contract ↗</a></p>' : '') + '</section>';
+    }
+    html += '<div class="q-preview-wide">' + agreementPaper(a) + '</div>';
+    html += '<section class="card"><h2 style="margin-bottom:6px">History</h2>' + (a.history || []).slice().reverse().map(function (h) {
+      return '<div class="row small"><span style="flex:none;width:96px;font-weight:700;color:var(--nf-olive)">' + esc(longDate(h.at.slice(0, 10))) + '</span><span>' + esc(h.what) + ' · ' + esc(personName(h.by, h.byLabel)) + '</span></div>';
+    }).join('') + '</section>';
+    return html;
+  }
+  function agreementsPanel() {
+    var ids = Object.keys(SUPPLYAGREEMENTS);
+    var rows = ids.map(function (id) { return { id: id, a: SUPPLYAGREEMENTS[id], s: agreementState(id, SUPPLYAGREEMENTS[id]) }; })
+      .sort(function (x, y) { return (y.a.createdAt || '').localeCompare(x.a.createdAt || ''); });
+    var waiting = rows.filter(function (r) { return r.s.key === 'Awaiting approval' || r.s.key === 'Returned'; });
+    return '<section class="card"><div class="card-head"><h2>Supply agreements</h2><button class="btn btn-cta" data-aact="new">+ Create agreement</button></div>' +
+      '<p class="small muted" style="margin:6px 0 10px">Drafted here, approved and signed by ' + esc(APPROVER.name) + ', then downloaded as a branded PDF or an Outlook email draft to send for signature.</p>' +
+      (CAN_APPROVE && waiting.length ? '<div class="card warn-card" style="margin:0 0 10px"><h3 style="margin:0 0 6px">Ready for your review · ' + waiting.length + '</h3>' +
+        waiting.map(function (r) { return '<div class="row"><button class="lnk" data-agr="' + esc(r.id) + '">' + esc(r.a.number || r.a.company || 'Draft') + '</button><span class="small">' + esc(r.a.company || '') + '</span>' + aBadge(r.s) + '</div>'; }).join('') + '</div>' : '') +
+      (rows.length ? rows.slice(0, 8).map(function (r) { return '<div class="row"><button class="lnk" data-agr="' + esc(r.id) + '">' + esc(r.a.number || 'Draft') + '</button><span class="small">' + esc(r.a.company || '') + '</span>' + aBadge(r.s) + '</div>'; }).join('')
+        : '<p class="small muted" style="margin:10px 0 0">No supply agreements drafted yet.</p>') + '</section>';
+  }
   function vContracts() {
     var types = CONTRACTS.reduce(function (m, c) { m[c.type] = (m[c.type] || 0) + 1; return m; }, {});
     var t = st.conType || '';
@@ -2363,6 +3120,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     var count = function (k) { return al.filter(function (a) { return a.kind === k; }).length; };
     var store = REVIEW_STORE && REVIEW_STORE.mode === 'shared' ? 'Confirmations are shared with everyone who uses this page.' : 'Confirmations are saved in this browser only.';
     return '<div><div class="eyebrow">Stage 2 · Run-rate · Key Contracts Register</div><h1>Contracts &amp; price reviews</h1><p class="sub">' + CONTRACTS.length + ' contracts from the Key Contracts Register (SharePoint, via Power BI). Alerts are worked out against today, ' + esc(longDate(iso(TODAY))) + '. ' + store + '</p></div>' +
+      agreementsPanel() +
       kpiGrid([
         { label: 'Expired', value: String(count('expired')), note: 'in the last two years' },
         { label: 'Expiring within 90 days', value: String(count('expiry')), note: 'start renewal talks' },
@@ -2734,7 +3492,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       '<section class="card"><h2 style="margin-bottom:6px">What it will do</h2><ul style="margin:0;padding-left:20px;line-height:1.7">' + p.bullets.map(function (b) { return '<li>' + esc(b) + '</li>'; }).join('') + '</ul></section>' +
       '<section class="plan-ex"><div class="eyebrow">Example</div><p style="margin:6px 0 0;font-size:16px">' + esc(p.example) + '</p></section></div>';
   }
-  var VIEWS = { home: vHome, pipeline: vPipeline, accounts: vAccounts, account: vAccount, data: vData, comms: vComms, deal: vDeal, activities: vActivities, products: vProducts, dashboard: vDashboard, planned: vPlanned, contracts: vContracts, contract: vContract, prospects: vProspects, prospect: vProspect, prospectNew: vProspectNew, quotes: vQuotes, quote: vQuote, quoteEdit: vQuoteEdit, quoteTerms: vQuoteTerms, complaints: vComplaints, complaint: vComplaint, complaintNew: vComplaintNew };
+  var VIEWS = { home: vHome, pipeline: vPipeline, accounts: vAccounts, account: vAccount, data: vData, comms: vComms, deal: vDeal, activities: vActivities, products: vProducts, dashboard: vDashboard, planned: vPlanned, contracts: vContracts, contract: vContract, prospects: vProspects, prospect: vProspect, prospectNew: vProspectNew, quotes: vQuotes, quote: vQuote, quoteEdit: vQuoteEdit, quoteTerms: vQuoteTerms, complaints: vComplaints, complaint: vComplaint, complaintNew: vComplaintNew, agreement: vAgreement, agreementEdit: vAgreementEdit };
   function quoteBadge() {
     var ids = Object.keys(QUOTES);
     var waiting = ids.filter(function (id) { return quoteState(id, QUOTES[id]).key === 'Awaiting approval'; }).length;
@@ -2962,7 +3720,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     document.getElementById('app').innerHTML =
       '<header class="top"><button class="navtoggle" data-nav="open" aria-label="Open menu"><span></span><span></span><span></span></button><a class="brand" href="#" data-go="home">' + MARK + '<div><div class="name">Rolly</div><div class="by">Nature’s Flame CRM</div></div></a>' +
       '<div class="search"><input type="search" aria-label="Search accounts, deals and contacts" placeholder="Search accounts, deals, contacts"></div>' +
-      '<div class="top-right"><button class="btn btn-cta" data-go="prospectNew">+ New prospect</button>' + avatarHtml() + '</div></header>' + source +
+      '<div class="top-right">' + avatarHtml() + '</div></header>' + source +
       '<div class="body"><div class="nav-backdrop' + (st.navOpen ? ' show' : '') + '" data-nav="close"></div><nav class="side' + (st.navOpen ? ' side-open' : '') + '" aria-label="Feature tree">' +
       '<button class="side-close" data-nav="close" aria-label="Close menu">Close ×</button>' + side +
       '<div style="padding:0 10px"><div class="eyebrow" style="font-size:12.5px;padding-bottom:8px">Stage 4 · Customer portal</div><a class="portal-link" href="portal.html">See what a customer sees →</a></div>' +
@@ -2983,7 +3741,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
 
   // ---------- Events ----------
   document.addEventListener('click', function (e) {
-    var el = e.target.closest('[data-go],[data-plan],[data-deal],[data-acc],[data-draft],[data-chat],[data-sugg],[data-seg],[data-con],[data-ctype],[data-rv-open],[data-rv-save],[data-rv-cancel],[data-lead],[data-lstage],[data-lact],[data-pfilter],[data-quote],[data-qact],[data-qfilter],[data-qnew-lead],[data-qnew-acc],[data-qnew-prospect],[data-nav],[data-cmp],[data-cact],[data-cfilter]');
+    var el = e.target.closest('[data-go],[data-plan],[data-deal],[data-acc],[data-draft],[data-chat],[data-sugg],[data-seg],[data-con],[data-ctype],[data-rv-open],[data-rv-save],[data-rv-cancel],[data-lead],[data-lstage],[data-lact],[data-pfilter],[data-quote],[data-qact],[data-qfilter],[data-qnew-lead],[data-qnew-acc],[data-qnew-prospect],[data-nav],[data-cmp],[data-cact],[data-cfilter],[data-agr],[data-aact]');
     if (!el) return;
     var ds = el.dataset;
     if (ds.lead) { set({ view: 'prospect', leadId: ds.lead, lPanel: null, crmError: '', copyMsg: '', copyFallback: false, af: null, sf: null }); window.scrollTo(0, 0); return; }
@@ -2999,12 +3757,15 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
     if (ds.cmp) { set({ view: 'complaint', complaintId: ds.cmp, cPanel: null, cMsg: '', crmError: '' }); window.scrollTo(0, 0); return; }
     if (ds.cact) { complaintAction(ds.cact, el); return; }
     if ('cfilter' in ds) { set({ cFilter: ds.cfilter }); return; }
+    if (ds.agr) { set({ view: 'agreement', agreementId: ds.agr, aPanel: null, aMsg: '', crmError: '' }); window.scrollTo(0, 0); return; }
+    if (ds.aact) { agreementAction(ds.aact, el); return; }
     if (ds.go === 'quoteTerms') { st.qt = null; st.qMsg = ''; }
     if (ds.go === 'quote' && !QUOTES[st.quoteId]) ds = { go: 'quotes' };
     if (ds.go === 'prospectNew' && st.view !== 'prospectNew') { st.pf = blankProspect(); st.pfEditId = null; st.pfErrors = []; st.crmError = ''; }
     if (ds.go === 'prospect' && !LEADS[st.leadId]) ds = { go: 'prospects' };
     if (ds.go === 'complaintNew' && st.view !== 'complaintNew') { st.cf = blankComplaint(); st.cfErrors = []; st.crmError = ''; }
     if (ds.go === 'complaint' && !COMPLAINTS[st.complaintId]) ds = { go: 'complaints' };
+    if (ds.go === 'agreement' && !SUPPLYAGREEMENTS[st.agreementId]) ds = { go: 'contracts' };
     if ('seg' in ds) set({ accSeg: ds.seg });
     else if ('ctype' in ds) set({ conType: ds.ctype });
     else if (ds.con) { set({ view: 'contract', conKey: ds.con, rvOpen: null, rvError: '' }); window.scrollTo(0, 0); }
@@ -3076,6 +3837,21 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
       else if (d.caf) (st.caf = st.caf || {})[d.caf] = v;
       else if (d.cdf) (st.cdf = st.cdf || {})[d.cdf] = v;
       else if (d.gaf) (st.gaf = st.gaf || {})[d.gaf] = v;
+      else if (d.saf) {
+        var saf = st.saf = st.saf || blankAgreement();
+        saf[d.saf] = v;
+        if (d.saf === 'company') {
+          // same keystroke-safety split as the Quotes company field: an exact match repopulates other
+          // fields' own values, so it needs the full render(); everything else only refreshes the live
+          // preview, so the company field itself is never rebuilt mid-keystroke.
+          var acm = companyMatch(v);
+          if (acm) { applyCompanyToAgreement(saf, acm); render(); } else { delete saf.acc; delete saf.lead; renderAgreementLive(); }
+        }
+        else if (e.target.tagName === 'SELECT') render(); else renderAgreementLive();
+      }
+      else if (d.asf) (st.asf = st.asf || {})[d.asf] = v;
+      else if (d.apf2) (st.apf2 = st.apf2 || {})[d.apf2] = v;
+      else if (d.agf) (st.agf = st.agf || {})[d.agf] = v;
     }
   });
   document.addEventListener('change', function (e) {
@@ -3094,6 +3870,7 @@ textarea{display:block;width:100%;margin-top:4px;border:1px solid var(--line);bo
   initCrm();
   initQuotes();
   initComplaints();
+  initAgreements();
   initAI();
   // Real data: embedded by `build_artifact.py --with-data`, or read from the local
   // (git-ignored) data/ folder. Without either, the page stays on sample data.
